@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+
+    <path d="M32 3
+           L40 24
+           L61 32
+           L40 40
+           L32 61
+           L24 40
+           L3 32
+           L24 24
+           Z" fill="white"></path>
+
+</svg>

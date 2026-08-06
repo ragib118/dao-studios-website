@@ -1,0 +1,243 @@
+.header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    z-index:1000;
+
+    background:rgba(5,5,5,.65);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+
+    border-bottom:1px solid rgba(255,255,255,.05);
+
+    transition:all .35s ease;
+}
+
+.header.scrolled{
+    background:rgba(0,0,0,.88);
+    backdrop-filter:blur(28px);
+    -webkit-backdrop-filter:blur(28px);
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.header nav{
+    width:min(1800px,92vw);
+    height:88px;
+
+    margin:0 auto;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    flex-shrink:0;
+}
+
+.logo img{
+    width:auto;
+    height:64px;
+}
+
+.desktopNav{
+    display:flex;
+    align-items:center;
+    gap:42px;
+    list-style:none;
+}
+
+.desktopNav a{
+    position:relative;
+    color:rgba(255,255,255,.88);
+    font-size:15px;
+    font-weight:500;
+    letter-spacing:.03em;
+    transition:.3s;
+}
+
+.desktopNav a:hover{
+    color:#D6B36A;
+}
+
+.desktopNav a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-8px;
+    width:0;
+    height:2px;
+    background:#C6A45C;
+    transition:.3s;
+}
+
+.desktopNav a:hover::after{
+    width:100%;
+}
+
+/* ---------------- Hamburger ---------------- */
+
+.menuButton{
+    width:52px;
+    height:52px;
+
+    display:none;
+
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    gap:6px;
+
+    background:none;
+    border:none;
+    cursor:pointer;
+}
+
+.menuButton span{
+    width:24px;
+    height:2px;
+    background:#fff;
+    transition:.35s;
+}
+
+.menuButton.open span:nth-child(1){
+    transform:translateY(8px) rotate(45deg);
+}
+
+.menuButton.open span:nth-child(2){
+    opacity:0;
+}
+
+.menuButton.open span:nth-child(3){
+    transform:translateY(-8px) rotate(-45deg);
+}
+
+/* ---------------- Mobile Menu ---------------- */
+
+.mobileMenu{
+    position:fixed;
+    inset:0;
+
+    background:#0b0b0b;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    z-index:999;
+}
+
+.mobileMenu ul{
+    list-style:none;
+    text-align:center;
+}
+
+.mobileMenu li{
+    margin:28px 0;
+}
+
+.mobileMenu a{
+    font-size:34px;
+    font-weight:700;
+    color:#fff;
+    transition:.3s;
+}
+
+.mobileMenu a:hover{
+    color:#C6A45C;
+}
+
+/* ---------------- Large Desktop ---------------- */
+
+@media (min-width:1920px){
+
+    .header nav{
+        width:min(2200px,90vw);
+    }
+
+    .desktopNav{
+        gap:56px;
+    }
+
+}
+
+/* ---------------- Laptop ---------------- */
+
+@media (max-width:1200px){
+
+    .header nav{
+        width:94vw;
+    }
+
+    .desktopNav{
+        gap:28px;
+    }
+
+}
+
+/* ---------------- Tablet ---------------- */
+
+@media (max-width:900px){
+
+    .desktopNav{
+        display:none;
+    }
+
+    .menuButton{
+        display:flex;
+    }
+
+    .logo img{
+        height:56px;
+    }
+
+    .header nav{
+        height:80px;
+    }
+
+}
+
+/* ---------------- Mobile ---------------- */
+
+@media (max-width:480px){
+
+    .logo img{
+        height:48px;
+    }
+
+    .mobileMenu a{
+        font-size:28px;
+    }
+
+}
+
+.mobileMenuContent{
+    width:100%;
+    height:100%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.closeButton{
+    position:absolute;
+    top:28px;
+    right:28px;
+
+    width:56px;
+    height:56px;
+
+    border:none;
+    background:transparent;
+
+    color:#fff;
+    font-size:34px;
+
+    cursor:pointer;
+}

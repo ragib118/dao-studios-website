@@ -1,0 +1,254 @@
+.stats{
+    position:relative;
+    overflow:hidden;
+}
+
+.statsGlow{
+    position:absolute;
+    top:-300px;
+    left:50%;
+    transform:translateX(-50%);
+    width:900px;
+    height:900px;
+    border-radius:50%;
+    background:radial-gradient(
+        circle,
+        rgba(198,164,92,.10),
+        transparent 70%
+    );
+    pointer-events:none;
+    z-index:0;
+}
+
+.storyBlock,
+.journeyIntro{
+    position:relative;
+    z-index:2;
+}
+
+.journeyIntro{
+    max-width:760px;
+    margin:0 auto 140px;
+    padding:180px 40px 0;
+    text-align:center;
+}
+
+.journeyIntro span{
+    color:#C6A45C;
+    font-size:13px;
+    letter-spacing:8px;
+    font-weight:700;
+}
+
+.journeyIntro h2{
+    font-size:clamp(56px,6vw,88px);
+    line-height:.95;
+    letter-spacing:-0.04em;
+}
+
+.journeyIntro p{
+    max-width:650px;
+    margin:32px auto 0;
+    color:rgba(255,255,255,.7);
+    font-size:18px;
+    line-height:1.8;
+}
+
+.journeyWrapper{
+    position:relative;
+    width:100%;
+}
+
+.stickyStage{
+    position:relative;
+}
+
+.storyBlock{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    padding:0 8%;
+    overflow:hidden;
+}
+
+.backgroundWord{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:clamp(120px,18vw,300px);
+    font-weight:900;
+    letter-spacing:10px;
+    color:#fff;
+    opacity:.026;
+    pointer-events:none;
+    user-select:none;
+    white-space:nowrap;
+    z-index:0;
+}
+
+.storyBlock.left .backgroundWord{
+    left:8%;
+}
+
+.storyBlock.right .backgroundWord{
+    right:8%;
+}
+
+.storyContent{
+    position:relative;
+    z-index:2;
+    width:min(1800px,92vw);
+    margin:auto;
+}
+
+.storyText{
+    width:100%;
+    max-width:650px;
+}
+
+.storyBlock.left .storyText{
+    text-align:left;
+}
+
+.storyBlock.right .storyText{
+    margin-left:auto;
+    text-align:right;
+}
+
+.goldLine{
+    width:80px;
+    height:2px;
+    margin-bottom:28px;
+    background:linear-gradient(
+        90deg,
+        #C6A45C,
+        #E8C87A
+    );
+    border-radius:999px;
+    box-shadow:
+        0 0 10px rgba(198,164,92,.65),
+        0 0 24px rgba(198,164,92,.28);
+}
+
+.storyBlock.left .goldLine{
+    margin-right:auto;
+}
+
+.storyBlock.right .goldLine{
+    margin-left:auto;
+}
+
+.chapter{
+    color:#C6A45C;
+    font-size:11px;
+    letter-spacing:10px;
+    font-weight:700;
+    opacity:.5;
+}
+
+.storyText h3{
+    margin-top:16px;
+    font-size:clamp(32px,3.2vw,48px);
+    line-height:1.08;
+    color:#fff;
+}
+
+.storyValue{
+    margin:34px 0 18px;
+    font-size:clamp(84px,11vw,160px);
+    font-weight:900;
+    line-height:.88;
+    color:#fff;
+}
+
+.storyText h4{
+    font-size:26px;
+    color:#fff;
+    margin-bottom:16px;
+}
+
+.storyText p{
+    max-width:600px;
+    color:rgba(255,255,255,.72);
+    font-size:17px;
+    line-height:1.65;
+}
+
+.storyBlock.left .storyText p{
+    margin:0;
+}
+
+.storyBlock.right .storyText p{
+    margin-left:auto;
+}
+
+@media (min-width:1920px){
+
+    .storyContent{
+        width:min(2000px,90vw);
+    }
+
+    .storyText{
+        max-width:760px;
+    }
+
+}
+
+@media (max-width:1024px){
+
+    .storyBlock{
+        min-height:100vh;
+        height:auto;
+        padding:100px 48px;
+    }
+
+    .storyBlock.left .storyText,
+    .storyBlock.right .storyText{
+        margin:0 auto;
+        text-align:center;
+    }
+
+    .storyText p{
+        margin:0 auto;
+    }
+
+    .backgroundWord{
+        font-size:clamp(120px,22vw,220px);
+    }
+
+}
+
+@media (max-width:768px){
+
+    .journeyIntro{
+        margin-bottom:80px;
+        padding:0 24px;
+    }
+
+    .journeyIntro h2{
+        font-size:48px;
+    }
+
+    .storyBlock{
+        padding:80px 24px;
+    }
+
+    .storyValue{
+        font-size:96px;
+    }
+
+    .storyText h3{
+        font-size:36px;
+    }
+
+    .storyText h4{
+        font-size:24px;
+    }
+
+    .storyText p{
+        font-size:16px;
+    }
+
+}
