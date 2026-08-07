@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.daostudios.co"),
 
   title: {
-    default: "DAO Studios | Original Animated Worlds & Stories",
+    default: "DAO Studios",
     template: "%s | DAO Studios",
   },
 
@@ -86,7 +86,7 @@ export const metadata: Metadata = {
     url: "https://www.daostudios.co",
     siteName: "DAO Studios",
 
-    title: "DAO Studios | Original Animated Worlds & Stories",
+    title: "DAO Studios",
 
     description:
       "Experience original animated worlds, unforgettable characters, and cinematic storytelling created by DAO Studios.",
@@ -104,7 +104,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "DAO Studios | Original Animated Worlds & Stories",
+    title: "DAO Studios",
 
     description:
       "Original animated worlds, cinematic adventures, and unforgettable stories.",
@@ -113,8 +113,22 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
+    icon: [
+      {
+        url: "/favicon.ico",
+      },
+      {
+        url: "/favicon-32x32.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+      {
+        url: "/favicon-16x16.png",
+        sizes: "16x16",
+        type: "image/png",
+      },
+    ],
+
     apple: "/apple-touch-icon.png",
   },
 };
@@ -128,25 +142,44 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-
-    name: "DAO Studios",
-
-    url: "https://www.daostudios.co",
-
-    logo: "https://www.daostudios.co/logo.png",
-
-    description:
-      "DAO Studios creates original animated worlds, cinematic storytelling, unforgettable characters, and premium entertainment.",
-
-    sameAs: [
-      "https://www.youtube.com/@TheDaoStudios",
-      "https://www.facebook.com/daostudios1",
-      "https://www.instagram.com/daostudios1",
-    ],
-  };
+    const organizationSchema = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+    
+      name: "DAO Studios",
+    
+      url: "https://www.daostudios.co",
+    
+      logo: "https://www.daostudios.co/logo.png",
+    
+      image: "https://www.daostudios.co/logo.png",
+    
+      description:
+        "DAO Studios creates original animated worlds, cinematic storytelling, unforgettable characters, and premium entertainment.",
+    
+      sameAs: [
+        "https://www.youtube.com/@TheDaoStudios",
+        "https://www.facebook.com/daostudios1",
+        "https://www.instagram.com/daostudios1",
+      ],
+    };
+    
+    const websiteSchema = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+    
+      name: "DAO Studios",
+    
+      url: "https://www.daostudios.co",
+    
+      description:
+        "Official website of DAO Studios featuring original animated worlds, stories, and cinematic entertainment.",
+    
+      publisher: {
+        "@type": "Organization",
+        name: "DAO Studios",
+      },
+    };
 
   return (
     <html
@@ -154,14 +187,15 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body>
-        <GoogleTagManager
-          gtmId={process.env.NEXT_PUBLIC_GTM_ID!}
-        />
+        <GoogleTagManager gtmId="GTM-K7CNF8HF" />
 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationSchema),
+            __html: JSON.stringify([
+              organizationSchema,
+              websiteSchema,
+            ]),
           }}
         />
 
