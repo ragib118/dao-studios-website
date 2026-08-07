@@ -8,8 +8,12 @@ export default function Hero() {
         muted
         loop
         playsInline
+        preload="metadata"
       >
-        <source src="/videos/hero.mp4" type="video/mp4" />
+        <source
+          src="https://res.cloudinary.com/alvgxo0y/video/upload/q_auto,f_auto/v1786077087/hero.mp4"
+          type="video/mp4"
+        />
       </video>
 
       <div className="heroGradient"></div>
