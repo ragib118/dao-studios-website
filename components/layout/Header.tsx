@@ -1,14 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { navigation } from "@/data/navigation";
+import SearchOverlay from "@/components/layout/SearchOverlay";
 
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
+    const searchButtonRef = useRef<HTMLButtonElement>(null);
+
+    const toggleSearch = () => {
+        setSearchOpen((isOpen) => !isOpen);
+    };
 
     useEffect(() => {
         const onScroll = () => {
@@ -21,7 +28,8 @@ export default function Header() {
     }, []);
 
     return (
-        <header className={scrolled ? "header scrolled" : "header"}>
+        <>
+            <header className={scrolled ? "header scrolled" : "header"}>
 
             <nav>
 
@@ -46,9 +54,19 @@ export default function Header() {
                 <ul className="desktopNav">
                     {navigation.map((item) => (
                         <li key={item.href}>
-                            <Link href={item.href}>
-                                {item.label}
-                            </Link>
+                            {item.href === "/search" ? (
+                                <button
+                                    ref={searchButtonRef}
+                                    type="button"
+                                    aria-controls="site-search-dialog"
+                                    aria-expanded={searchOpen}
+                                    onClick={toggleSearch}
+                                >
+                                    {item.label}
+                                </button>
+                            ) : (
+                                <Link href={item.href}>{item.label}</Link>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -95,14 +113,24 @@ export default function Header() {
         {navigation.map((item) => (
 
             <li key={item.href}>
-
-                <Link
-                    href={item.href}
-                    onClick={() => setMenuOpen(false)}
-                >
-                    {item.label}
-                </Link>
-
+                {item.href === "/search" ? (
+                    <button
+                        ref={searchButtonRef}
+                        type="button"
+                        aria-controls="site-search-dialog"
+                        aria-expanded={searchOpen}
+                        onClick={toggleSearch}
+                    >
+                        {item.label}
+                    </button>
+                ) : (
+                    <Link
+                        href={item.href}
+                        onClick={() => setMenuOpen(false)}
+                    >
+                        {item.label}
+                    </Link>
+                )}
             </li>
 
         ))}
@@ -117,6 +145,13 @@ export default function Header() {
 
             </AnimatePresence>
 
-        </header>
+            </header>
+
+            <SearchOverlay
+                isOpen={searchOpen}
+                onClose={() => setSearchOpen(false)}
+                triggerRef={searchButtonRef}
+            />
+        </>
     );
 }
