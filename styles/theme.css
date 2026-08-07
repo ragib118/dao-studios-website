@@ -405,6 +405,88 @@
     line-height:1.5;
 }
 
+.seriesOverlayPanel{
+    width:min(75vw,1100px);
+}
+
+.seriesOverlayGrid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:24px;
+    margin-top:52px;
+}
+
+.seriesOverlayCard{
+    position:relative;
+    display:block;
+    aspect-ratio:1.6 / 1;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;
+    background:#111;
+    color:#fff;
+    cursor:pointer;
+    isolation:isolate;
+    transition:transform .35s cubic-bezier(.22,.61,.36,1), border-color .35s ease, box-shadow .35s ease;
+}
+
+.seriesOverlayCard img{
+    object-fit:cover;
+    transition:transform .6s cubic-bezier(.22,.61,.36,1), filter .35s ease;
+}
+
+.seriesOverlayCardShade{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(to top,rgba(0,0,0,.88),transparent 62%);
+    z-index:1;
+}
+
+.seriesOverlayBadge,
+.seriesOverlayTitle{
+    position:absolute;
+    z-index:2;
+}
+
+.seriesOverlayBadge{
+    top:18px;
+    left:18px;
+    padding:7px 10px;
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:999px;
+    background:rgba(0,0,0,.3);
+    backdrop-filter:blur(10px);
+    color:rgba(255,255,255,.92);
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+
+.seriesOverlayTitle{
+    right:22px;
+    bottom:20px;
+    left:22px;
+    font-family:var(--font-geist-sans),Arial,Helvetica,sans-serif;
+    font-size:clamp(22px,2.4vw,34px);
+    font-weight:600;
+    letter-spacing:-.04em;
+    text-align:left;
+}
+
+.seriesOverlayCard:hover,
+.seriesOverlayCard:focus-visible{
+    border-color:rgba(214,179,106,.72);
+    box-shadow:0 20px 45px rgba(0,0,0,.45),0 0 0 3px rgba(198,164,92,.1);
+    transform:translateY(-7px);
+}
+
+.seriesOverlayCard:hover img,
+.seriesOverlayCard:focus-visible img{
+    filter:brightness(1.08) saturate(1.08);
+    transform:scale(1.06);
+}
+
 .searchTrending button{
     padding:13px 19px;
     border:1px solid rgba(255,255,255,.16);
@@ -436,6 +518,10 @@
         width:min(88vw,900px);
         padding:clamp(48px,8vw,64px);
         border-radius:28px;
+    }
+
+    .seriesOverlayGrid{
+        gap:18px;
     }
 }
 
@@ -471,5 +557,15 @@
     .searchTrending{
         margin-top:38px;
         padding-top:26px;
+    }
+
+    .seriesOverlayGrid{
+        grid-template-columns:1fr;
+        gap:16px;
+        margin-top:38px;
+    }
+
+    .seriesOverlayCard{
+        aspect-ratio:1.5 / 1;
     }
 }

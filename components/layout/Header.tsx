@@ -6,15 +6,22 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { navigation } from "@/data/navigation";
 import SearchOverlay from "@/components/layout/SearchOverlay";
+import SeriesOverlay from "@/components/layout/SeriesOverlay";
 
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
+    const [seriesOpen, setSeriesOpen] = useState(false);
     const searchButtonRef = useRef<HTMLButtonElement>(null);
+    const seriesButtonRef = useRef<HTMLButtonElement>(null);
 
     const toggleSearch = () => {
         setSearchOpen((isOpen) => !isOpen);
+    };
+
+    const toggleSeries = () => {
+        setSeriesOpen((isOpen) => !isOpen);
     };
 
     useEffect(() => {
@@ -54,7 +61,17 @@ export default function Header() {
                 <ul className="desktopNav">
                     {navigation.map((item) => (
                         <li key={item.href}>
-                            {item.href === "/search" ? (
+                            {item.href === "/series" ? (
+                                <button
+                                    ref={seriesButtonRef}
+                                    type="button"
+                                    aria-controls="series-overlay-dialog"
+                                    aria-expanded={seriesOpen}
+                                    onClick={toggleSeries}
+                                >
+                                    {item.label}
+                                </button>
+                            ) : item.href === "/search" ? (
                                 <button
                                     ref={searchButtonRef}
                                     type="button"
@@ -113,7 +130,17 @@ export default function Header() {
         {navigation.map((item) => (
 
             <li key={item.href}>
-                {item.href === "/search" ? (
+                {item.href === "/series" ? (
+                    <button
+                        ref={seriesButtonRef}
+                        type="button"
+                        aria-controls="series-overlay-dialog"
+                        aria-expanded={seriesOpen}
+                        onClick={toggleSeries}
+                    >
+                        {item.label}
+                    </button>
+                ) : item.href === "/search" ? (
                     <button
                         ref={searchButtonRef}
                         type="button"
@@ -151,6 +178,11 @@ export default function Header() {
                 isOpen={searchOpen}
                 onClose={() => setSearchOpen(false)}
                 triggerRef={searchButtonRef}
+            />
+            <SeriesOverlay
+                isOpen={seriesOpen}
+                onClose={() => setSeriesOpen(false)}
+                triggerRef={seriesButtonRef}
             />
         </>
     );
