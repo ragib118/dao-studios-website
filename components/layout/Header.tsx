@@ -28,7 +28,11 @@ export default function Header() {
                 <Link
                     href="/"
                     className="logo"
-                    onClick={() => setMenuOpen(false)}
+                    onClick={(event) => {
+                        event.preventDefault();
+                        setMenuOpen(false);
+                        window.location.assign("/");
+                    }}
                 >
                     <Image
                         src="/logo.png"
