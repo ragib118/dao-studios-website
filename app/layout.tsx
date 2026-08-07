@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://daostudios.co"),
+  metadataBase: new URL("https://www.daostudios.co"),
 
   title: {
     default: "DAO Studios | Original Animated Worlds & Stories",
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   authors: [
     {
       name: "DAO Studios",
-      url: "https://daostudios.co",
+      url: "https://www.daostudios.co",
     },
   ],
 
@@ -62,8 +62,10 @@ export const metadata: Metadata = {
 
   category: "Entertainment",
 
+  manifest: "/manifest.webmanifest",
+
   alternates: {
-    canonical: "/",
+    canonical: "https://www.daostudios.co",
   },
 
   robots: {
@@ -81,7 +83,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://daostudios.co",
+    url: "https://www.daostudios.co",
     siteName: "DAO Studios",
 
     title: "DAO Studios | Original Animated Worlds & Stories",
@@ -91,7 +93,7 @@ export const metadata: Metadata = {
 
     images: [
       {
-        url: "/og-image.png",
+        url: "https://www.daostudios.co/og-image.png",
         width: 1731,
         height: 909,
         alt: "DAO Studios | Original Animated Worlds & Stories",
@@ -107,7 +109,7 @@ export const metadata: Metadata = {
     description:
       "Original animated worlds, cinematic adventures, and unforgettable stories.",
 
-    images: ["/og-image.png"],
+    images: ["https://www.daostudios.co/og-image.png"],
   },
 
   icons: {
@@ -129,16 +131,20 @@ export default function RootLayout({
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
+
     name: "DAO Studios",
-    url: "https://daostudios.co",
-    logo: "https://daostudios.co/logo.png",
+
+    url: "https://www.daostudios.co",
+
+    logo: "https://www.daostudios.co/logo.png",
+
     description:
       "DAO Studios creates original animated worlds, cinematic storytelling, unforgettable characters, and premium entertainment.",
 
     sameAs: [
       "https://www.youtube.com/@TheDaoStudios",
       "https://www.facebook.com/daostudios1",
-      "https://www.instagram.com/thedaostudios",
+      "https://www.instagram.com/daostudios1",
     ],
   };
 
@@ -164,7 +170,6 @@ export default function RootLayout({
         <Header />
 
         {children}
-        
       </body>
     </html>
   );
