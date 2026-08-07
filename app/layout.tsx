@@ -129,13 +129,9 @@ export default function RootLayout({
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-
     name: "DAO Studios",
-
     url: "https://daostudios.co",
-
     logo: "https://daostudios.co/logo.png",
-
     description:
       "DAO Studios creates original animated worlds, cinematic storytelling, unforgettable characters, and premium entertainment.",
 
@@ -168,7 +164,7 @@ export default function RootLayout({
         <Header />
 
         {children}
-
+        
       </body>
     </html>
   );
