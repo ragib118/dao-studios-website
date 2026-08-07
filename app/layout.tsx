@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import {
+  GoogleAnalytics,
+  GoogleTagManager,
+} from "@next/third-parties/google";
+
 import "./globals.css";
 
 import Header from "@/components/layout/Header";
@@ -128,9 +132,13 @@ export default function RootLayout({
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
+
     name: "DAO Studios",
+
     url: "https://daostudios.co",
+
     logo: "https://daostudios.co/logo.png",
+
     description:
       "DAO Studios creates original animated worlds, cinematic storytelling, unforgettable characters, and premium entertainment.",
 
@@ -147,19 +155,23 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body>
+        <GoogleTagManager
+          gtmId={process.env.NEXT_PUBLIC_GTM_ID!}
+        />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(organizationSchema),
           }}
         />
-  
+
         <SmoothScroll />
-        
+
         <Header />
-        
+
         {children}
-        
+
         <GoogleAnalytics
           gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID!}
         />
