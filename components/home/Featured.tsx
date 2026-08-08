@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import SeriesCard from "./SeriesCard";
-import { featuredSeries } from "@/data/featured";
+import { series } from "@/data/series";
 
 export default function Featured() {
     const sliderRef = useRef<HTMLDivElement>(null);
@@ -158,11 +158,12 @@ export default function Featured() {
                         onMouseUp={handleMouseUp}
                         onMouseLeave={handleMouseLeave}
                     >
-                        {featuredSeries.map((series) => (
+                        {series.map((item) => (
                             <SeriesCard
-                                key={series.title}
-                                title={series.title}
-                                poster={series.poster}
+                                key={item.slug}
+                                title={item.title}
+                                poster={item.assets.poster}
+                                slug={item.slug}
                             />
                         ))}
                     </div>

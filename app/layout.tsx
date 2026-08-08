@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleTagManager } from "@next/third-parties/google";
 
 import "./globals.css";
+import "@/styles/dropdown.css";
 
 import Header from "@/components/layout/Header";
 import SmoothScroll from "@/components/SmoothScroll";

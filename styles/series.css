@@ -1,0 +1,293 @@
+.seriesHero{
+    position: relative;
+
+    min-height: calc(85vh - 90px);
+
+    padding-top: 60px;
+    padding-bottom: 40px;
+
+    overflow: visible;
+}
+
+.seriesHero__background{
+    position:absolute;
+    inset:0;
+
+    background-size:cover;
+    background-position:center;
+
+    filter:blur(20px);
+    transform:scale(1.15);
+
+    opacity:.45;
+}
+
+.seriesHero__gradient{
+    position:absolute;
+    inset:0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,.35),
+            rgba(0,0,0,.85) 70%,
+            #000 100%
+        );
+}
+
+.seriesHero__container{
+    position: relative;
+    z-index: 2;
+
+    max-width: 1400px;
+    margin: auto;
+
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 60px;
+
+    padding: 10 40px;
+}
+
+.seriesHero__poster{
+    transform:translateY(30px);
+
+    flex-shrink:0;
+}
+
+.seriesHero__poster img{
+    width:235px;
+    aspect-ratio:9/16;
+
+    object-fit:cover;
+
+    border-radius:22px;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.55);
+}
+
+.seriesHero__content{
+    max-width:700px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+
+    gap:12px;
+
+    transform: translateY(15px);
+}
+
+.seriesHero__title{
+   font-size:clamp(48px, 6vw, 72px);
+    font-weight:800;
+    line-height:1;
+
+    margin-bottom:0px;
+}
+
+.seriesHero__genres{
+    color:#d6d6d6;
+
+    font-size:20px;
+
+    margin-bottom:0px;
+}
+
+.seriesHero__status{
+    display:inline-flex;
+
+    align-items:center;
+
+    width: fit-content;
+
+    padding:12px 22px;
+
+    border-radius:999px;
+
+    background:#181818;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    color:#f2c14e;
+
+    font-weight:700;
+}
+
+@media(max-width:900px){
+
+    .seriesHero{
+        height:auto;
+        padding-top:120px;
+    }
+
+    .seriesHero__container{
+        flex-direction:column;
+        align-items:center;
+
+        text-align:center;
+
+        gap:40px;
+    }
+
+    .seriesHero__poster{
+        transform:none;
+    }
+
+    .seriesHero__poster img{
+        width:220px;
+    }
+
+    .seriesHero__content{
+        padding-bottom:80px;
+    }
+
+    .seriesHero__title{
+        font-size:48px;
+    }
+
+}
+
+/* =========================
+   ABOUT SERIES
+========================= */
+
+.aboutSeries{
+    padding:0px 40px 120px;
+    background:#050505;
+}
+
+.aboutSeries__container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.aboutSeries__header span{
+    color:#f2c14e;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:2px;
+}
+
+.aboutSeries__header h2{
+    font-size:42px;
+    font-weight:800;
+    margin-top:10px;
+    margin-bottom:30px;
+}
+
+.aboutSeries__description{
+    max-width:760px;
+
+    color:#d2d2d2;
+
+    font-size:20px;
+    line-height:1.8;
+
+    margin-bottom:60px;
+}
+
+.aboutSeries__meta{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:25px;
+}
+
+.aboutSeries__card{
+    background:#111;
+
+    border:1px solid rgba(255,255,255,.06);
+
+    border-radius:20px;
+
+    padding:30px;
+}
+
+.aboutSeries__card .label{
+    display:block;
+
+    color:#888;
+
+    font-size:13px;
+
+    letter-spacing:1px;
+
+    text-transform:uppercase;
+
+    margin-bottom:12px;
+}
+
+.aboutSeries__card p{
+    font-size:18px;
+    color:white;
+}
+
+.seriesHero__actions{
+    display:flex;
+    gap:16px;
+
+    margin:4px 0;
+
+    flex-wrap:wrap;
+}
+
+.watchButton{
+
+    background:#f2c14e;
+
+    color:#000;
+
+    border:none;
+
+    padding:14px 28px;
+
+    border-radius:999px;
+
+    font-size:17px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.watchButton:hover{
+
+    transform:translateY(-2px);
+
+    background:#ffd66e;
+
+}
+
+.trailerButton{
+
+    background:transparent;
+
+    color:white;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    padding:16px 34px;
+
+    border-radius:999px;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.trailerButton:hover{
+
+    background:rgba(255,255,255,.08);
+
+}

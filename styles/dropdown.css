@@ -1,0 +1,151 @@
+.daoDropdown{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+
+    width:320px;
+
+    position:relative;
+}
+
+.daoDropdown__label{
+
+    color:#8e8e8e;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+    text-transform:uppercase;
+}
+
+.daoDropdown__button{
+
+    width:100%;
+    height:58px;
+
+    background:#161616;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:18px;
+
+    padding:0 20px;
+
+    color:white;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    transition:
+        border .25s,
+        background .25s,
+        transform .2s;
+}
+
+.daoDropdown__button:hover{
+
+    border-color:#f2c14e;
+
+    background:#1b1b1b;
+}
+
+.daoDropdown__button:active{
+
+    transform:scale(.985);
+}
+
+.daoDropdown__menu{
+    overscroll-behavior: contain;
+
+    position:absolute;
+
+    top:82px;
+
+    left:0;
+
+    width:100%;
+
+    background:rgba(16,16,16,.96);
+
+    backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 18px 50px rgba(0,0,0,.45);
+
+    z-index:999;
+
+    max-height: 260px;
+    
+    overflow-y: auto;
+    
+    overflow-x: hidden;
+}
+
+.daoDropdown__item{
+
+    width:100%;
+
+    border:none;
+
+    background:transparent;
+
+    color:white;
+
+    padding:18px 20px;
+
+    text-align:left;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+    transition:
+        background .22s,
+        color .22s,
+        padding-left .22s;
+}
+
+.daoDropdown__item:hover{
+
+    background:#f2c14e;
+
+    color:black;
+
+    padding-left:28px;
+}
+
+.daoDropdown__item.active{
+
+    color:#f2c14e;
+
+    font-weight:700;
+}
+
+.daoDropdown__item.active:hover{
+
+    color:black;
+}
+
+@media(max-width:900px){
+
+    .daoDropdown{
+
+        width:100%;
+
+    }
+
+}
