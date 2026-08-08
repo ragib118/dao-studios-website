@@ -58,9 +58,7 @@ export const metadata: Metadata = {
 
   creator: "DAO Studios",
   publisher: "DAO Studios",
-
   applicationName: "DAO Studios",
-
   category: "Entertainment",
 
   manifest: "/manifest.webmanifest",
@@ -72,6 +70,7 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+
     googleBot: {
       index: true,
       follow: true,
@@ -143,44 +142,47 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-    const organizationSchema = {
-      "@context": "https://schema.org",
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+
+    name: "DAO Studios",
+
+    url: "https://www.daostudios.co",
+
+    logo: "https://www.daostudios.co/logo.png",
+
+    image: "https://www.daostudios.co/logo.png",
+
+    description:
+      "DAO Studios creates original animated worlds, cinematic storytelling, unforgettable characters, and premium entertainment.",
+
+    sameAs: [
+      "https://www.youtube.com/@TheDaoStudios",
+      "https://www.facebook.com/daostudios1",
+      "https://www.instagram.com/daostudios1",
+    ],
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+
+    name: "DAO Studios",
+
+    alternateName: ["DAO", "daostudios.co"],
+
+    url: "https://www.daostudios.co/",
+
+    description:
+      "Official website of DAO Studios featuring original animated worlds, stories, and cinematic entertainment.",
+
+    publisher: {
       "@type": "Organization",
-    
       name: "DAO Studios",
-    
-      url: "https://www.daostudios.co",
-    
-      logo: "https://www.daostudios.co/logo.png",
-    
-      image: "https://www.daostudios.co/logo.png",
-    
-      description:
-        "DAO Studios creates original animated worlds, cinematic storytelling, unforgettable characters, and premium entertainment.",
-    
-      sameAs: [
-        "https://www.youtube.com/@TheDaoStudios",
-        "https://www.facebook.com/daostudios1",
-        "https://www.instagram.com/daostudios1",
-      ],
-    };
-    
-    const websiteSchema = {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-    
-      name: "DAO Studios",
-    
-      url: "https://www.daostudios.co",
-    
-      description:
-        "Official website of DAO Studios featuring original animated worlds, stories, and cinematic entertainment.",
-    
-      publisher: {
-        "@type": "Organization",
-        name: "DAO Studios",
-      },
-    };
+      url: "https://www.daostudios.co/",
+    },
+  };
 
   return (
     <html
@@ -188,8 +190,6 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body>
-        <GoogleTagManager gtmId="GTM-K7CNF8HF" />
-
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
