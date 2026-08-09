@@ -39,7 +39,7 @@ export const puku: Series = {
                         "Poko discovers a mysterious bamboo path that leads to an unforgettable adventure.",
 
                     thumbnail: "",
-                    video: "",
+                    video: "https://www.youtube.com/shorts/c809scnsrAU",
                 },
 
                 {
