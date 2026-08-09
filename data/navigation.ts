@@ -8,10 +8,6 @@ export const navigation = [
     href: "/series",
   },
   {
-    label: "Shorts",
-    href: "/shorts",
-  },
-  {
     label: "New",
     href: "/new",
   },
