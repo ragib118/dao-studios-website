@@ -2,7 +2,7 @@ import { Series } from "./types";
 
 export const leoMochi: Series = {
     title: "Leo & Mochi",
-    slug: "leo-mochi",
+    slug: "leo-and-mochi",
 
     description:
         "A heartwarming friendship between a little boy and a curious bunny creates unforgettable adventures.",
