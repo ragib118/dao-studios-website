@@ -16,6 +16,34 @@ const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
 );
 
+/* ---------------------------------------
+   PREMIUM DAO ADMIN ICON
+--------------------------------------- */
+
+function AdminAvatarIcon() {
+    return (
+        <svg
+            viewBox="0 0 40 40"
+            width="24"
+            height="24"
+            aria-hidden="true"
+        >
+            <text
+                x="20"
+                y="24"
+                textAnchor="middle"
+                fill="#F3D27A"
+                fontSize="18"
+                fontWeight="700"
+                fontFamily="Arial, Helvetica, sans-serif"
+                letterSpacing="0.4"
+            >
+                DAO
+            </text>
+        </svg>
+    );
+}
+
 function getInitial(user: User) {
     const email = user.email || "";
 
@@ -434,7 +462,11 @@ export default function Header() {
                                 <div className="profileWrapper">
                                     <button
                                         type="button"
-                                        className="profileAvatar"
+                                        className={`profileAvatar ${
+                                            isAdmin
+                                                ? "adminAvatar"
+                                                : ""
+                                        }`}
                                         onClick={
                                             toggleProfile
                                         }
@@ -443,12 +475,20 @@ export default function Header() {
                                             profileOpen
                                         }
                                         aria-haspopup="menu"
-                                        style={{
-                                            backgroundColor:
-                                                avatarColor,
-                                        }}
+                                        style={
+                                            isAdmin
+                                                ? undefined
+                                                : {
+                                                      backgroundColor:
+                                                          avatarColor,
+                                                  }
+                                        }
                                     >
-                                        {initial}
+                                        {isAdmin ? (
+                                            <AdminAvatarIcon />
+                                        ) : (
+                                            initial
+                                        )}
                                     </button>
 
                                     <AnimatePresence>
@@ -477,13 +517,25 @@ export default function Header() {
                                             >
                                                 <div className="profileHeader">
                                                     <div
-                                                        className="profileMenuAvatar"
-                                                        style={{
-                                                            backgroundColor:
-                                                                avatarColor,
-                                                        }}
+                                                        className={`profileMenuAvatar ${
+                                                            isAdmin
+                                                                ? "adminMenuAvatar"
+                                                                : ""
+                                                        }`}
+                                                        style={
+                                                            isAdmin
+                                                                ? undefined
+                                                                : {
+                                                                      backgroundColor:
+                                                                          avatarColor,
+                                                                  }
+                                                        }
                                                     >
-                                                        {initial}
+                                                        {isAdmin ? (
+                                                            <AdminAvatarIcon />
+                                                        ) : (
+                                                            initial
+                                                        )}
                                                     </div>
 
                                                     <div className="profileIdentity">
@@ -739,15 +791,25 @@ export default function Header() {
                                                     }
                                                 >
                                                     <span
-                                                        className="mobileProfileAvatar"
-                                                        style={{
-                                                            backgroundColor:
-                                                                avatarColor,
-                                                        }}
-                                                    >
-                                                        {
-                                                            initial
+                                                        className={`mobileProfileAvatar ${
+                                                            isAdmin
+                                                                ? "adminMobileAvatar"
+                                                                : ""
+                                                        }`}
+                                                        style={
+                                                            isAdmin
+                                                                ? undefined
+                                                                : {
+                                                                      backgroundColor:
+                                                                          avatarColor,
+                                                                  }
                                                         }
+                                                    >
+                                                        {isAdmin ? (
+                                                            <AdminAvatarIcon />
+                                                        ) : (
+                                                            initial
+                                                        )}
                                                     </span>
 
                                                     <span>
@@ -928,7 +990,8 @@ export default function Header() {
 
                     transition:
                         transform 0.2s ease,
-                        box-shadow 0.2s ease;
+                        box-shadow 0.2s ease,
+                        border-color 0.2s ease;
                 }
 
                 .profileAvatar:hover {
@@ -939,6 +1002,61 @@ export default function Header() {
                             rgba(255, 255, 255, 0.18),
                         0 6px 18px
                             rgba(0, 0, 0, 0.35);
+                }
+
+                /* --------------------------------------- */
+                /* PREMIUM ADMIN AVATAR */
+                /* --------------------------------------- */
+
+                .adminAvatar {
+                    background:
+                        radial-gradient(
+                            circle at 35% 25%,
+                            #2c2a25 0%,
+                            #151412 45%,
+                            #090909 100%
+                        ) !important;
+
+                    border: 1px solid
+                        rgba(245, 210, 120, 0.85);
+
+                    box-shadow:
+                        0 0 0 2px
+                            rgba(0, 0, 0, 0.55),
+                        0 0 14px
+                            rgba(225, 177, 69, 0.16),
+                        inset 0 1px 0
+                            rgba(255, 255, 255, 0.08);
+
+                    color: #f3d27a;
+                }
+
+                .adminAvatar svg {
+                    display: block;
+
+                    filter:
+                        drop-shadow(
+                            0 0 5px
+                                rgba(
+                                    243,
+                                    210,
+                                    122,
+                                    0.22
+                                )
+                        );
+                }
+
+                .adminAvatar:hover {
+                    border-color:
+                        rgba(255, 225, 150, 1);
+
+                    box-shadow:
+                        0 0 0 2px
+                            rgba(0, 0, 0, 0.55),
+                        0 0 22px
+                            rgba(225, 177, 69, 0.32),
+                        inset 0 1px 0
+                            rgba(255, 255, 255, 0.12);
                 }
 
                 /* --------------------------------------- */
@@ -1011,6 +1129,31 @@ export default function Header() {
 
                     font-size: 18px;
                     font-weight: 700;
+                }
+
+                .adminMenuAvatar {
+                    background:
+                        radial-gradient(
+                            circle at 35% 25%,
+                            #2c2a25 0%,
+                            #151412 45%,
+                            #090909 100%
+                        ) !important;
+
+                    border: 1px solid
+                        rgba(245, 210, 120, 0.85) !important;
+
+                    color: #f3d27a !important;
+
+                    box-shadow:
+                        0 0 14px
+                            rgba(225, 177, 69, 0.18),
+                        inset 0 1px 0
+                            rgba(255, 255, 255, 0.08);
+                }
+
+                .adminMenuAvatar svg {
+                    display: block;
                 }
 
                 .profileIdentity {
@@ -1197,6 +1340,31 @@ export default function Header() {
 
                     font-size: 14px;
                     font-weight: 700;
+                }
+
+                .adminMobileAvatar {
+                    background:
+                        radial-gradient(
+                            circle at 35% 25%,
+                            #2c2a25 0%,
+                            #151412 45%,
+                            #090909 100%
+                        ) !important;
+
+                    border: 1px solid
+                        rgba(245, 210, 120, 0.85) !important;
+
+                    color: #f3d27a !important;
+
+                    box-shadow:
+                        0 0 10px
+                            rgba(225, 177, 69, 0.16);
+                }
+
+                .adminMobileAvatar svg {
+                    display: block;
+                    width: 20px;
+                    height: 20px;
                 }
 
                 @media (max-width: 768px) {

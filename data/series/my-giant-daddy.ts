@@ -12,7 +12,7 @@ export const myGiantDaddy: Series = {
         "Family",
     ],
 
-    status: "Coming Soon",
+    status: "Now Streaming",
 
     assets: {
         poster: "/series/my-giant-daddy/poster.png",

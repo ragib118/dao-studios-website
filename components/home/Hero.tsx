@@ -1,7 +1,19 @@
+"use client";
+
 export default function Hero() {
+  const handleExplore = () => {
+    const discoverSection = document.querySelector(".featured");
+
+    if (discoverSection) {
+      discoverSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <section className="hero">
-
       <video
         className="heroVideo"
         autoPlay
@@ -31,12 +43,16 @@ export default function Hero() {
           </p>
 
           <div className="heroButtons">
-            <button>▶ Start Watching</button>
-            <button>Explore Worlds</button>
+            <button
+              className="heroExploreButton"
+              type="button"
+              onClick={handleExplore}
+            >
+              Explore Worlds
+            </button>
           </div>
         </div>
       </div>
-
     </section>
   );
 }

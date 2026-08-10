@@ -13,7 +13,7 @@ export const puku: Series = {
         "Fantasy",
     ],
 
-    status: "Coming Soon",
+    status: "Now Streaming",
 
     assets: {
         poster: "/series/puku/poster.png",

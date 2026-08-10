@@ -12,7 +12,7 @@ export const leoMochi: Series = {
         "Adventure",
     ],
 
-    status: "Coming Soon",
+    status: "Now Streaming",
 
     assets: {
         poster: "/series/leo-mochi/poster.png",

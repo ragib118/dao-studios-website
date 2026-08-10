@@ -6,7 +6,7 @@ import SeriesCard from "./SeriesCard";
 import { series } from "@/data/series";
 
 export default function Featured() {
-    const sliderRef = useRef<HTMLDivElement>(null);
+    const sliderRef = useRef<HTMLDivElement | null>(null);
 
     const isDragging = useRef(false);
     const startX = useRef(0);
@@ -27,7 +27,10 @@ export default function Featured() {
                 slider.scrollWidth - 1;
 
             // Let the page scroll when we've reached either end
-            if ((e.deltaY < 0 && atStart) || (e.deltaY > 0 && atEnd)) {
+            if (
+                (e.deltaY < 0 && atStart) ||
+                (e.deltaY > 0 && atEnd)
+            ) {
                 return;
             }
 
@@ -119,7 +122,10 @@ export default function Featured() {
     };
 
     return (
-        <section className="featured">
+        <section
+            id="discover-worlds"
+            className="featured"
+        >
             <div className="featuredContainer">
 
                 <div className="sectionHeader">

@@ -12,7 +12,7 @@ export const bubuCrab: Series = {
         "Kids",
     ],
 
-    status: "Coming Soon",
+    status: "Now Streaming",
 
     assets: {
         poster: "/series/bubu-crab/poster.png",
