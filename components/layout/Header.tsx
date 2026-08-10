@@ -85,7 +85,12 @@ export default function Header() {
     const [searchOpen, setSearchOpen] = useState(false);
     const [seriesOpen, setSeriesOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
+
     const [user, setUser] = useState<User | null>(null);
+
+    // ADMIN STATE
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [adminChecking, setAdminChecking] = useState(true);
 
     const searchButtonRef =
         useRef<HTMLButtonElement>(null);
@@ -114,36 +119,138 @@ export default function Header() {
         setSeriesOpen(false);
     };
 
-    useEffect(() => {
-        const getUser = async () => {
-            const {
-                data: { user },
-            } = await supabase.auth.getUser();
+    // ---------------------------------------
+    // AUTH + ADMIN CHECK
+    // ---------------------------------------
 
-            setUser(user);
+    useEffect(() => {
+        let mounted = true;
+
+        const checkUserAndAdmin = async () => {
+            try {
+                const {
+                    data: { user },
+                } = await supabase.auth.getUser();
+
+                if (!mounted) return;
+
+                setUser(user);
+
+                // Logged out = definitely not admin
+                if (!user) {
+                    setIsAdmin(false);
+                    setAdminChecking(false);
+                    return;
+                }
+
+                // Check the secure Supabase is_admin() function
+                const {
+                    data: adminResult,
+                    error: adminError,
+                } = await supabase.rpc("is_admin");
+
+                if (!mounted) return;
+
+                if (adminError) {
+                    console.error(
+                        "ADMIN CHECK ERROR:",
+                        adminError
+                    );
+
+                    setIsAdmin(false);
+                } else {
+                    setIsAdmin(adminResult === true);
+                }
+
+                setAdminChecking(false);
+            } catch (error) {
+                console.error(
+                    "AUTH / ADMIN CHECK FAILED:",
+                    error
+                );
+
+                if (!mounted) return;
+
+                setIsAdmin(false);
+                setAdminChecking(false);
+            }
         };
 
-        getUser();
+        checkUserAndAdmin();
 
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange(
-            (_event, session) => {
-                setUser(session?.user ?? null);
+            async (_event, session) => {
+                if (!mounted) return;
+
+                const currentUser =
+                    session?.user ?? null;
+
+                setUser(currentUser);
+
+                // Logged out
+                if (!currentUser) {
+                    setIsAdmin(false);
+                    setAdminChecking(false);
+                    return;
+                }
+
+                // Re-check admin status after login/logout
+                try {
+                    const {
+                        data: adminResult,
+                        error: adminError,
+                    } = await supabase.rpc("is_admin");
+
+                    if (!mounted) return;
+
+                    if (adminError) {
+                        console.error(
+                            "ADMIN CHECK ERROR:",
+                            adminError
+                        );
+
+                        setIsAdmin(false);
+                    } else {
+                        setIsAdmin(
+                            adminResult === true
+                        );
+                    }
+                } catch (error) {
+                    console.error(
+                        "ADMIN RPC FAILED:",
+                        error
+                    );
+
+                    if (!mounted) return;
+
+                    setIsAdmin(false);
+                }
+
+                setAdminChecking(false);
             }
         );
 
         return () => {
+            mounted = false;
             subscription.unsubscribe();
         };
     }, []);
+
+    // ---------------------------------------
+    // SCROLL
+    // ---------------------------------------
 
     useEffect(() => {
         const onScroll = () => {
             setScrolled(window.scrollY > 20);
         };
 
-        window.addEventListener("scroll", onScroll);
+        window.addEventListener(
+            "scroll",
+            onScroll
+        );
 
         return () => {
             window.removeEventListener(
@@ -152,6 +259,10 @@ export default function Header() {
             );
         };
     }, []);
+
+    // ---------------------------------------
+    // CLOSE PROFILE WHEN CLICKING OUTSIDE
+    // ---------------------------------------
 
     useEffect(() => {
         const handleClickOutside = (
@@ -180,10 +291,15 @@ export default function Header() {
         };
     }, []);
 
+    // ---------------------------------------
+    // SIGN OUT
+    // ---------------------------------------
+
     const handleSignOut = async () => {
         await supabase.auth.signOut();
 
         setUser(null);
+        setIsAdmin(false);
         setProfileOpen(false);
         setMenuOpen(false);
 
@@ -212,14 +328,21 @@ export default function Header() {
                 }
             >
                 <nav>
+                    {/* --------------------------------------- */}
                     {/* LOGO */}
+                    {/* --------------------------------------- */}
+
                     <Link
                         href="/"
                         className="logo"
                         onClick={(event) => {
                             event.preventDefault();
+
                             setMenuOpen(false);
-                            window.location.assign("/");
+
+                            window.location.assign(
+                                "/"
+                            );
                         }}
                     >
                         <Image
@@ -231,7 +354,10 @@ export default function Header() {
                         />
                     </Link>
 
+                    {/* --------------------------------------- */}
                     {/* DESKTOP NAVIGATION */}
+                    {/* --------------------------------------- */}
+
                     <ul className="desktopNav">
                         {navigation.map((item) => (
                             <li key={item.href}>
@@ -279,7 +405,27 @@ export default function Header() {
                             </li>
                         ))}
 
+                        {/* --------------------------------------- */}
+                        {/* ADMIN BUTTON */}
+                        {/* --------------------------------------- */}
+
+                        {user &&
+                            isAdmin &&
+                            !adminChecking && (
+                                <li className="adminNavItem">
+                                    <Link
+                                        href="/admin"
+                                        className="adminNavLink"
+                                    >
+                                        Admin
+                                    </Link>
+                                </li>
+                            )}
+
+                        {/* --------------------------------------- */}
                         {/* PROFILE */}
+                        {/* --------------------------------------- */}
+
                         <li
                             className="profileNavItem"
                             ref={profileRef}
@@ -357,6 +503,33 @@ export default function Header() {
 
                                                 <div className="profileDivider" />
 
+                                                {/* ADMIN INSIDE PROFILE MENU */}
+                                                {isAdmin &&
+                                                    !adminChecking && (
+                                                        <>
+                                                            <Link
+                                                                href="/admin"
+                                                                className="profileMenuItem adminProfileItem"
+                                                                onClick={() =>
+                                                                    setProfileOpen(
+                                                                        false
+                                                                    )
+                                                                }
+                                                                role="menuitem"
+                                                            >
+                                                                <span>
+                                                                    Admin Dashboard
+                                                                </span>
+
+                                                                <span className="menuArrow">
+                                                                    →
+                                                                </span>
+                                                            </Link>
+
+                                                            <div className="profileDivider" />
+                                                        </>
+                                                    )}
+
                                                 <Link
                                                     href="/account"
                                                     className="profileMenuItem"
@@ -398,7 +571,10 @@ export default function Header() {
                         </li>
                     </ul>
 
+                    {/* --------------------------------------- */}
                     {/* MOBILE MENU BUTTON */}
+                    {/* --------------------------------------- */}
+
                     <button
                         className={`menuButton ${
                             menuOpen ? "open" : ""
@@ -415,7 +591,10 @@ export default function Header() {
                     </button>
                 </nav>
 
+                {/* --------------------------------------- */}
                 {/* MOBILE MENU */}
+                {/* --------------------------------------- */}
+
                 <AnimatePresence>
                     {menuOpen && (
                         <motion.div
@@ -521,6 +700,32 @@ export default function Header() {
                                         )
                                     )}
 
+                                    {/* --------------------------------------- */}
+                                    {/* MOBILE ADMIN */}
+                                    {/* --------------------------------------- */}
+
+                                    {user &&
+                                        isAdmin &&
+                                        !adminChecking && (
+                                            <li className="mobileAdminSection">
+                                                <Link
+                                                    href="/admin"
+                                                    className="mobileAdminLink"
+                                                    onClick={() =>
+                                                        setMenuOpen(
+                                                            false
+                                                        )
+                                                    }
+                                                >
+                                                    Admin Dashboard
+                                                </Link>
+                                            </li>
+                                        )}
+
+                                    {/* --------------------------------------- */}
+                                    {/* MOBILE PROFILE */}
+                                    {/* --------------------------------------- */}
+
                                     <li className="mobileProfileSection">
                                         {user ? (
                                             <>
@@ -580,6 +785,7 @@ export default function Header() {
             </header>
 
             {/* SEARCH OVERLAY */}
+
             <SearchOverlay
                 isOpen={searchOpen}
                 onClose={() =>
@@ -589,6 +795,7 @@ export default function Header() {
             />
 
             {/* SERIES OVERLAY */}
+
             <SeriesOverlay
                 isOpen={seriesOpen}
                 onClose={() =>
@@ -619,28 +826,106 @@ export default function Header() {
                     z-index: 10002;
                 }
 
+                /* --------------------------------------- */
+                /* ADMIN NAVIGATION */
+                /* --------------------------------------- */
+
+                .adminNavItem {
+                    display: flex;
+                    align-items: center;
+                }
+
+                .adminNavLink {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    padding: 8px 14px;
+
+                    border: 1px solid
+                        rgba(255, 255, 255, 0.16);
+
+                    border-radius: 8px;
+
+                    background: rgba(
+                        255,
+                        255,
+                        255,
+                        0.04
+                    );
+
+                    color: #ffffff;
+
+                    text-decoration: none;
+
+                    font-size: 13px;
+                    font-weight: 600;
+
+                    transition:
+                        background 0.2s ease,
+                        border-color 0.2s ease,
+                        transform 0.2s ease;
+                }
+
+                .adminNavLink:hover {
+                    background: rgba(
+                        255,
+                        255,
+                        255,
+                        0.09
+                    );
+
+                    border-color: rgba(
+                        255,
+                        255,
+                        255,
+                        0.3
+                    );
+
+                    transform: translateY(-1px);
+                }
+
+                .adminProfileItem {
+                    color: #ffffff !important;
+                    font-weight: 600;
+                }
+
+                /* --------------------------------------- */
+                /* PROFILE AVATAR */
+                /* --------------------------------------- */
+
                 .profileAvatar {
                     width: 38px;
                     height: 38px;
                     padding: 0;
+
                     display: flex;
                     align-items: center;
                     justify-content: center;
+
                     border: 2px solid
                         rgba(255, 255, 255, 0.85);
+
                     border-radius: 50%;
+
                     box-sizing: border-box;
+
                     color: #ffffff;
+
                     font-size: 15px;
                     font-weight: 700;
+
                     font-family:
                         Arial, Helvetica, sans-serif;
+
                     cursor: pointer;
+
                     box-shadow:
                         0 0 0 2px
                             rgba(0, 0, 0, 0.45),
                         0 4px 14px
                             rgba(0, 0, 0, 0.25);
+
                     transition:
                         transform 0.2s ease,
                         box-shadow 0.2s ease;
@@ -648,6 +933,7 @@ export default function Header() {
 
                 .profileAvatar:hover {
                     transform: scale(1.08);
+
                     box-shadow:
                         0 0 0 2px
                             rgba(255, 255, 255, 0.18),
@@ -655,12 +941,20 @@ export default function Header() {
                             rgba(0, 0, 0, 0.35);
                 }
 
+                /* --------------------------------------- */
+                /* PROFILE MENU */
+                /* --------------------------------------- */
+
                 .profileMenu {
                     position: absolute;
+
                     top: calc(100% + 14px);
                     right: 0;
+
                     width: 300px;
+
                     padding: 10px;
+
                     box-sizing: border-box;
 
                     background: #111111 !important;
@@ -668,6 +962,7 @@ export default function Header() {
 
                     border: 1px solid
                         rgba(255, 255, 255, 0.14);
+
                     border-radius: 16px;
 
                     box-shadow:
@@ -679,7 +974,9 @@ export default function Header() {
                             rgba(255, 255, 255, 0.05);
 
                     z-index: 100000 !important;
+
                     isolation: isolate;
+
                     overflow: hidden;
 
                     backdrop-filter: none !important;
@@ -689,21 +986,29 @@ export default function Header() {
                 .profileHeader {
                     display: flex;
                     align-items: center;
+
                     gap: 13px;
+
                     padding: 12px;
                 }
 
                 .profileMenuAvatar {
                     width: 48px;
                     height: 48px;
+
                     flex-shrink: 0;
+
                     display: flex;
                     align-items: center;
                     justify-content: center;
+
                     border: 2px solid
                         rgba(255, 255, 255, 0.8);
+
                     border-radius: 50%;
+
                     color: #ffffff;
+
                     font-size: 18px;
                     font-weight: 700;
                 }
@@ -714,28 +1019,37 @@ export default function Header() {
 
                 .profileName {
                     margin-bottom: 4px;
+
                     color: #ffffff;
+
                     font-size: 14px;
                     font-weight: 600;
                 }
 
                 .profileEmail {
                     max-width: 205px;
+
                     overflow: hidden;
+
                     color: rgba(
                         255,
                         255,
                         255,
                         0.45
                     );
+
                     font-size: 11px;
+
                     text-overflow: ellipsis;
+
                     white-space: nowrap;
                 }
 
                 .profileDivider {
                     height: 1px;
+
                     margin: 7px 4px;
+
                     background: rgba(
                         255,
                         255,
@@ -748,16 +1062,22 @@ export default function Header() {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+
                     padding: 13px 12px;
+
                     border-radius: 10px;
+
                     color: rgba(
                         255,
                         255,
                         255,
                         0.85
                     );
+
                     text-decoration: none;
+
                     font-size: 13px;
+
                     transition:
                         background 0.2s ease,
                         color 0.2s ease;
@@ -770,6 +1090,7 @@ export default function Header() {
                         255,
                         0.06
                     );
+
                     color: #ffffff;
                 }
 
@@ -780,24 +1101,34 @@ export default function Header() {
                         255,
                         0.35
                     );
+
                     font-size: 16px;
                 }
 
                 .profileSignOut {
                     width: 100%;
+
                     padding: 13px 12px;
+
                     border: 0;
+
                     border-radius: 10px;
+
                     background: transparent;
+
                     color: rgba(
                         255,
                         255,
                         255,
                         0.5
                     );
+
                     text-align: left;
+
                     font-size: 13px;
+
                     cursor: pointer;
+
                     transition:
                         background 0.2s ease,
                         color 0.2s ease;
@@ -810,37 +1141,70 @@ export default function Header() {
                         255,
                         0.06
                     );
+
                     color: #ffffff;
+                }
+
+                /* --------------------------------------- */
+                /* MOBILE */
+                /* --------------------------------------- */
+
+                .mobileAdminSection {
+                    margin-top: 8px;
+                }
+
+                .mobileAdminLink {
+                    display: block;
+
+                    padding: 12px 0;
+
+                    color: #ffffff !important;
+
+                    text-decoration: none;
+
+                    font-weight: 600;
                 }
 
                 .mobileProfileSection {
                     display: flex;
+
                     flex-direction: column;
+
                     gap: 8px;
                 }
 
                 .mobileProfileLink {
                     display: flex;
                     align-items: center;
+
                     gap: 12px;
                 }
 
                 .mobileProfileAvatar {
                     width: 34px;
                     height: 34px;
+
                     display: flex;
                     align-items: center;
                     justify-content: center;
+
                     border: 2px solid
                         rgba(255, 255, 255, 0.8);
+
                     border-radius: 50%;
+
                     color: #ffffff;
+
                     font-size: 14px;
                     font-weight: 700;
                 }
 
                 @media (max-width: 768px) {
                     .profileMenu {
+                        display: none;
+                    }
+
+                    .adminNavItem {
                         display: none;
                     }
                 }

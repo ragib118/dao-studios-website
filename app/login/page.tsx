@@ -22,43 +22,139 @@ export default function LoginPage() {
         setError("");
     };
 
-    const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    // ---------------------------------------
+    // LOGIN
+    // ---------------------------------------
+
+    const handleLogin = async (
+        event: FormEvent<HTMLFormElement>
+    ) => {
         event.preventDefault();
 
         clearMessages();
         setLoading(true);
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const {
+            data: authData,
+            error: loginError,
+        } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
 
-        if (error) {
-            setError(error.message);
+        if (loginError) {
+            setError(loginError.message);
             setLoading(false);
             return;
         }
 
+        const user = authData.user;
+
+        if (!user) {
+            setError(
+                "Login succeeded, but no user session was found."
+            );
+            setLoading(false);
+            return;
+        }
+
+        console.log("LOGGED IN USER:", user);
+
+        // ---------------------------------------
+        // CHECK ADMIN STATUS
+        // ---------------------------------------
+
+        const {
+            data: adminData,
+            error: adminError,
+        } = await supabase
+            .from("admin_users")
+            .select("role")
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+        console.log("ADMIN DATA:", adminData);
+        console.log("ADMIN ERROR:", adminError);
+
+        // If admin check fails,
+        // still allow normal login.
+        if (adminError) {
+            console.error(
+                "ADMIN CHECK ERROR:",
+                adminError
+            );
+
+            window.location.href = "/";
+            return;
+        }
+
+        // ---------------------------------------
+        // OWNER → ADMIN DASHBOARD
+        // ---------------------------------------
+
+        if (adminData?.role === "owner") {
+            console.log(
+                "OWNER DETECTED → REDIRECTING TO ADMIN"
+            );
+
+            window.location.href = "/admin";
+            return;
+        }
+
+        // ---------------------------------------
+        // NORMAL USER → HOMEPAGE
+        // ---------------------------------------
+
+        console.log(
+            "NORMAL USER → REDIRECTING TO HOMEPAGE"
+        );
+
         window.location.href = "/";
     };
 
-    const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
+    // ---------------------------------------
+    // SIGN UP
+    // ---------------------------------------
+
+    const handleSignup = async (
+        event: FormEvent<HTMLFormElement>
+    ) => {
         event.preventDefault();
 
         clearMessages();
 
         if (password.length < 8) {
-            setError("Password must be at least 8 characters long.");
+            setError(
+                "Password must be at least 8 characters long."
+            );
             return;
         }
 
         setLoading(true);
 
+        // ---------------------------------------
+        // IMPORTANT:
+        // Email confirmation must go to /auth/confirm
+        // ---------------------------------------
+
+        const siteUrl =
+            window.location.hostname === "localhost"
+                ? window.location.origin
+                : "https://www.daostudios.co";
+
+        const confirmationUrl =
+            `${siteUrl}/auth/confirm`;
+
+        console.log(
+            "EMAIL CONFIRMATION URL:",
+            confirmationUrl
+        );
+
         const { error } = await supabase.auth.signUp({
             email,
             password,
             options: {
-                emailRedirectTo: `${window.location.origin}/auth/callback`,
+                emailRedirectTo: confirmationUrl,
             },
         });
 
@@ -76,6 +172,10 @@ export default function LoginPage() {
         setLoading(false);
     };
 
+    // ---------------------------------------
+    // FORGOT PASSWORD
+    // ---------------------------------------
+
     const handleForgotPassword = async (
         event: FormEvent<HTMLFormElement>
     ) => {
@@ -84,12 +184,21 @@ export default function LoginPage() {
         clearMessages();
         setLoading(true);
 
-        const { error } = await supabase.auth.resetPasswordForEmail(
-            email,
-            {
-                redirectTo: `${window.location.origin}/reset-password`,
-            }
-        );
+        const siteUrl =
+            window.location.hostname === "localhost"
+                ? window.location.origin
+                : "https://www.daostudios.co";
+
+        const resetUrl =
+            `${siteUrl}/reset-password`;
+
+        const { error } =
+            await supabase.auth.resetPasswordForEmail(
+                email,
+                {
+                    redirectTo: resetUrl,
+                }
+            );
 
         if (error) {
             setError(error.message);
@@ -104,7 +213,13 @@ export default function LoginPage() {
         setLoading(false);
     };
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    // ---------------------------------------
+    // FORM SUBMIT
+    // ---------------------------------------
+
+    const handleSubmit = (
+        event: FormEvent<HTMLFormElement>
+    ) => {
         if (mode === "login") {
             return handleLogin(event);
         }
@@ -115,6 +230,10 @@ export default function LoginPage() {
 
         return handleForgotPassword(event);
     };
+
+    // ---------------------------------------
+    // PAGE TEXT
+    // ---------------------------------------
 
     const title =
         mode === "login"
@@ -130,11 +249,18 @@ export default function LoginPage() {
               ? "Create your DAO Studios account."
               : "Enter your email and we'll send you a reset link.";
 
+    // ---------------------------------------
+    // UI
+    // ---------------------------------------
+
     return (
         <main className="loginPage">
             <div className="loginBackground" />
 
             <section className="loginCard">
+
+                {/* LOGO */}
+
                 <div className="loginLogo">
                     <Image
                         src="/logo.png"
@@ -145,33 +271,57 @@ export default function LoginPage() {
                     />
                 </div>
 
+                {/* HEADER */}
+
                 <div className="loginHeader">
                     <h1>{title}</h1>
                     <p>{subtitle}</p>
                 </div>
 
+                {/* SUCCESS MESSAGE */}
+
                 {message && (
-                    <div className="loginMessage" role="status">
+                    <div
+                        className="loginMessage"
+                        role="status"
+                    >
                         {message}
                     </div>
                 )}
 
+                {/* ERROR MESSAGE */}
+
                 {error && (
-                    <div className="loginError" role="alert">
+                    <div
+                        className="loginError"
+                        role="alert"
+                    >
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="loginForm">
+                {/* FORM */}
+
+                <form
+                    onSubmit={handleSubmit}
+                    className="loginForm"
+                >
+
+                    {/* EMAIL */}
+
                     <div className="formGroup">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">
+                            Email
+                        </label>
 
                         <input
                             id="email"
                             type="email"
                             value={email}
                             onChange={(event) =>
-                                setEmail(event.target.value)
+                                setEmail(
+                                    event.target.value
+                                )
                             }
                             placeholder="you@example.com"
                             autoComplete="email"
@@ -180,9 +330,13 @@ export default function LoginPage() {
                         />
                     </div>
 
+                    {/* PASSWORD */}
+
                     {mode !== "forgot" && (
                         <div className="formGroup">
+
                             <div className="passwordLabelRow">
+
                                 <label htmlFor="password">
                                     Password
                                 </label>
@@ -193,15 +347,19 @@ export default function LoginPage() {
                                         className="forgotButton"
                                         onClick={() => {
                                             clearMessages();
-                                            setMode("forgot");
+                                            setMode(
+                                                "forgot"
+                                            );
                                         }}
                                     >
                                         Forgot password?
                                     </button>
                                 )}
+
                             </div>
 
                             <div className="passwordWrapper">
+
                                 <input
                                     id="password"
                                     type={
@@ -211,7 +369,10 @@ export default function LoginPage() {
                                     }
                                     value={password}
                                     onChange={(event) =>
-                                        setPassword(event.target.value)
+                                        setPassword(
+                                            event.target
+                                                .value
+                                        )
                                     }
                                     placeholder="Enter your password"
                                     autoComplete={
@@ -229,7 +390,8 @@ export default function LoginPage() {
                                     className="showPasswordButton"
                                     onClick={() =>
                                         setShowPassword(
-                                            (visible) => !visible
+                                            (visible) =>
+                                                !visible
                                         )
                                     }
                                     aria-label={
@@ -238,18 +400,26 @@ export default function LoginPage() {
                                             : "Show password"
                                     }
                                 >
-                                    {showPassword ? "Hide" : "Show"}
+                                    {showPassword
+                                        ? "Hide"
+                                        : "Show"}
                                 </button>
+
                             </div>
 
                             {mode === "signup" && (
                                 <span className="passwordHint">
-                                    Minimum 8 characters. Use uppercase,
-                                    lowercase, numbers and symbols.
+                                    Minimum 8 characters.
+                                    Use uppercase,
+                                    lowercase, numbers
+                                    and symbols.
                                 </span>
                             )}
+
                         </div>
                     )}
+
+                    {/* SUBMIT BUTTON */}
 
                     <button
                         type="submit"
@@ -264,16 +434,24 @@ export default function LoginPage() {
                                 ? "Create Account"
                                 : "Send Reset Link"}
                     </button>
+
                 </form>
+
+                {/* DIVIDER */}
 
                 <div className="loginDivider">
                     <span>or</span>
                 </div>
 
+                {/* MODE SWITCH */}
+
                 <div className="loginSwitch">
+
                     {mode === "login" && (
                         <>
-                            <span>Don't have an account?</span>
+                            <span>
+                                Don't have an account?
+                            </span>
 
                             <button
                                 type="button"
@@ -289,7 +467,9 @@ export default function LoginPage() {
 
                     {mode === "signup" && (
                         <>
-                            <span>Already have an account?</span>
+                            <span>
+                                Already have an account?
+                            </span>
 
                             <button
                                 type="button"
@@ -305,7 +485,9 @@ export default function LoginPage() {
 
                     {mode === "forgot" && (
                         <>
-                            <span>Remember your password?</span>
+                            <span>
+                                Remember your password?
+                            </span>
 
                             <button
                                 type="button"
@@ -318,13 +500,22 @@ export default function LoginPage() {
                             </button>
                         </>
                     )}
+
                 </div>
+
+                {/* FOOTER */}
 
                 <div className="loginFooter">
                     <span>© DAO Studios</span>
-                    <span>Secure authentication</span>
+
+                    <span>
+                        Secure authentication
+                    </span>
                 </div>
+
             </section>
+
+            {/* STYLES */}
 
             <style jsx>{`
                 .loginPage {
@@ -361,12 +552,15 @@ export default function LoginPage() {
                     width: 100%;
                     max-width: 460px;
                     padding: 44px;
-                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border: 1px solid
+                        rgba(255, 255, 255, 0.1);
                     border-radius: 24px;
                     background: rgba(15, 15, 15, 0.92);
                     box-shadow:
-                        0 30px 100px rgba(0, 0, 0, 0.55),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+                        0 30px 100px
+                            rgba(0, 0, 0, 0.55),
+                        inset 0 1px 0
+                            rgba(255, 255, 255, 0.04);
                     backdrop-filter: blur(20px);
                 }
 
@@ -424,10 +618,16 @@ export default function LoginPage() {
                     width: 100%;
                     box-sizing: border-box;
                     padding: 14px 15px;
-                    border: 1px solid rgba(255, 255, 255, 0.12);
+                    border: 1px solid
+                        rgba(255, 255, 255, 0.12);
                     border-radius: 10px;
                     outline: none;
-                    background: rgba(255, 255, 255, 0.045);
+                    background: rgba(
+                        255,
+                        255,
+                        255,
+                        0.045
+                    );
                     color: #ffffff;
                     font-size: 15px;
                     transition:
@@ -436,12 +636,27 @@ export default function LoginPage() {
                 }
 
                 .formGroup input::placeholder {
-                    color: rgba(255, 255, 255, 0.3);
+                    color: rgba(
+                        255,
+                        255,
+                        255,
+                        0.3
+                    );
                 }
 
                 .formGroup input:focus {
-                    border-color: rgba(220, 30, 30, 0.75);
-                    background: rgba(255, 255, 255, 0.07);
+                    border-color: rgba(
+                        220,
+                        30,
+                        30,
+                        0.75
+                    );
+                    background: rgba(
+                        255,
+                        255,
+                        255,
+                        0.07
+                    );
                 }
 
                 .formGroup input:disabled {
@@ -464,7 +679,12 @@ export default function LoginPage() {
                     transform: translateY(-50%);
                     border: 0;
                     background: transparent;
-                    color: rgba(255, 255, 255, 0.55);
+                    color: rgba(
+                        255,
+                        255,
+                        255,
+                        0.55
+                    );
                     cursor: pointer;
                     font-size: 13px;
                 }
@@ -477,7 +697,12 @@ export default function LoginPage() {
                     border: 0;
                     padding: 0;
                     background: transparent;
-                    color: rgba(255, 255, 255, 0.5);
+                    color: rgba(
+                        255,
+                        255,
+                        255,
+                        0.5
+                    );
                     cursor: pointer;
                     font-size: 12px;
                 }
@@ -487,7 +712,12 @@ export default function LoginPage() {
                 }
 
                 .passwordHint {
-                    color: rgba(255, 255, 255, 0.38);
+                    color: rgba(
+                        255,
+                        255,
+                        255,
+                        0.38
+                    );
                     font-size: 11px;
                     line-height: 1.4;
                 }
@@ -521,7 +751,12 @@ export default function LoginPage() {
                     align-items: center;
                     gap: 15px;
                     margin: 26px 0 20px;
-                    color: rgba(255, 255, 255, 0.3);
+                    color: rgba(
+                        255,
+                        255,
+                        255,
+                        0.3
+                    );
                     font-size: 12px;
                 }
 
@@ -530,7 +765,12 @@ export default function LoginPage() {
                     content: "";
                     height: 1px;
                     flex: 1;
-                    background: rgba(255, 255, 255, 0.1);
+                    background: rgba(
+                        255,
+                        255,
+                        255,
+                        0.1
+                    );
                 }
 
                 .loginSwitch {
@@ -539,7 +779,12 @@ export default function LoginPage() {
                     align-items: center;
                     gap: 6px;
                     flex-wrap: wrap;
-                    color: rgba(255, 255, 255, 0.48);
+                    color: rgba(
+                        255,
+                        255,
+                        255,
+                        0.48
+                    );
                     font-size: 13px;
                 }
 
@@ -566,14 +811,26 @@ export default function LoginPage() {
                 }
 
                 .loginError {
-                    border: 1px solid rgba(255, 70, 70, 0.25);
-                    background: rgba(255, 40, 40, 0.08);
+                    border: 1px solid
+                        rgba(255, 70, 70, 0.25);
+                    background: rgba(
+                        255,
+                        40,
+                        40,
+                        0.08
+                    );
                     color: #ff9b9b;
                 }
 
                 .loginMessage {
-                    border: 1px solid rgba(80, 200, 140, 0.25);
-                    background: rgba(80, 200, 140, 0.08);
+                    border: 1px solid
+                        rgba(80, 200, 140, 0.25);
+                    background: rgba(
+                        80,
+                        200,
+                        140,
+                        0.08
+                    );
                     color: #a8e8c5;
                 }
 
@@ -582,8 +839,14 @@ export default function LoginPage() {
                     justify-content: space-between;
                     margin-top: 30px;
                     padding-top: 18px;
-                    border-top: 1px solid rgba(255, 255, 255, 0.07);
-                    color: rgba(255, 255, 255, 0.25);
+                    border-top: 1px solid
+                        rgba(255, 255, 255, 0.07);
+                    color: rgba(
+                        255,
+                        255,
+                        255,
+                        0.25
+                    );
                     font-size: 11px;
                 }
 
