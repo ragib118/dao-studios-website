@@ -34,3 +34,121 @@ img {
   display: block;
   max-width: 100%;
 }
+
+/* =========================================
+   PROFILE DROPDOWN - FINAL FIX
+   ========================================= */
+
+header .profileNavItem {
+  position: relative !important;
+  z-index: 99999 !important;
+}
+
+header .profileWrapper {
+  position: relative !important;
+  z-index: 100000 !important;
+}
+
+header .profileWrapper .profileMenu {
+  position: absolute !important;
+
+  top: calc(100% + 14px) !important;
+  right: 0 !important;
+
+  width: 300px !important;
+  min-height: 150px !important;
+
+  padding: 10px !important;
+
+  /* SOLID BACKGROUND */
+  background: #111111 !important;
+  background-color: #111111 !important;
+
+  /* Make sure nothing can make it transparent */
+  opacity: 1 !important;
+  visibility: visible !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 16px !important;
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.8),
+    0 10px 30px rgba(0, 0, 0, 0.5) !important;
+
+  z-index: 999999 !important;
+
+  overflow: hidden !important;
+
+  /* IMPORTANT */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Dropdown contents */
+header .profileWrapper .profileMenu * {
+  box-sizing: border-box;
+}
+
+/* Header information */
+header .profileWrapper .profileHeader {
+  display: flex !important;
+  align-items: center !important;
+  gap: 13px !important;
+  padding: 12px !important;
+}
+
+/* Divider */
+header .profileWrapper .profileDivider {
+  height: 1px !important;
+  margin: 7px 4px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Profile/settings button */
+header .profileWrapper .profileMenuItem {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  width: 100% !important;
+
+  padding: 13px 12px !important;
+
+  background: transparent !important;
+
+  border-radius: 10px !important;
+
+  color: rgba(255, 255, 255, 0.9) !important;
+
+  text-decoration: none !important;
+}
+
+header .profileWrapper .profileMenuItem:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+/* Sign out */
+header .profileWrapper .profileSignOut {
+  display: block !important;
+
+  width: 100% !important;
+
+  padding: 13px 12px !important;
+
+  background: transparent !important;
+
+  border: 0 !important;
+  border-radius: 10px !important;
+
+  color: rgba(255, 255, 255, 0.6) !important;
+
+  text-align: left !important;
+
+  cursor: pointer !important;
+}
+
+header .profileWrapper .profileSignOut:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
