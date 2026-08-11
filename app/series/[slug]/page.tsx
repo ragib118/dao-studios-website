@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { series } from "@/data/series";
 import SeriesHero from "@/components/series/SeriesHero";
@@ -28,6 +28,25 @@ export default async function SeriesPage({
 
     // Connect to Supabase.
     const supabase = await createClient();
+
+    // A series page is watchable only for authenticated users.
+    // Previously, an anonymous request continued to the database
+    // query below. Supabase RLS could then return no series row,
+    // which caused Next.js to show a misleading 404 page.
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+        const nextPath = `/series/${slug}`;
+        const loginUrl =
+            `/login?next=${encodeURIComponent(nextPath)}` +
+            `&message=${encodeURIComponent(
+                "Sign Up/Login to watch for free."
+            )}`;
+
+        redirect(loginUrl);
+    }
 
     // Find the series in the Supabase database.
     const { data: dbSeries, error: seriesError } =
