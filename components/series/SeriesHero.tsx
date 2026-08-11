@@ -86,16 +86,6 @@ export default function SeriesHero({
                             >
                                 ▶ Watch Episode
                             </button>
-
-                            <button
-                                className="trailerButton"
-                                type="button"
-                                disabled={
-                                    !series.trailer
-                                }
-                            >
-                                ▶ Watch Trailer
-                            </button>
                         </div>
 
                         <EpisodeSelector
