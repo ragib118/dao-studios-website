@@ -1,10 +1,22 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 
 type Mode = "login" | "signup" | "forgot";
+
+function getSafeNextPath() {
+    const next = new URLSearchParams(
+        window.location.search
+    ).get("next");
+
+    if (!next || !next.startsWith("/") || next.startsWith("//")) {
+        return "/";
+    }
+
+    return next;
+}
 
 export default function LoginPage() {
     const [mode, setMode] = useState<Mode>("login");
@@ -16,6 +28,25 @@ export default function LoginPage() {
     const [error, setError] = useState("");
 
     const supabase = createClient();
+
+    useEffect(() => {
+        const params = new URLSearchParams(
+            window.location.search
+        );
+
+        const incomingMessage = params.get("message");
+        const incomingError = params.get("error");
+
+        if (incomingMessage) {
+            setMessage(incomingMessage);
+        }
+
+        if (incomingError === "confirmation_failed") {
+            setError(
+                "Email confirmation failed. Please try again."
+            );
+        }
+    }, []);
 
     const clearMessages = () => {
         setMessage("");
@@ -58,7 +89,7 @@ export default function LoginPage() {
             return;
         }
 
-        console.log("LOGGED IN USER:", user);
+        const nextPath = getSafeNextPath();
 
         // ---------------------------------------
         // CHECK ADMIN STATUS
@@ -73,10 +104,7 @@ export default function LoginPage() {
             .eq("user_id", user.id)
             .maybeSingle();
 
-        console.log("ADMIN DATA:", adminData);
-        console.log("ADMIN ERROR:", adminError);
-
-        // If admin check fails,
+        // If the admin check fails,
         // still allow normal login.
         if (adminError) {
             console.error(
@@ -84,7 +112,7 @@ export default function LoginPage() {
                 adminError
             );
 
-            window.location.href = "/";
+            window.location.href = nextPath;
             return;
         }
 
@@ -93,23 +121,15 @@ export default function LoginPage() {
         // ---------------------------------------
 
         if (adminData?.role === "owner") {
-            console.log(
-                "OWNER DETECTED → REDIRECTING TO ADMIN"
-            );
-
             window.location.href = "/admin";
             return;
         }
 
         // ---------------------------------------
-        // NORMAL USER → HOMEPAGE
+        // NORMAL USER → ORIGINAL DESTINATION
         // ---------------------------------------
 
-        console.log(
-            "NORMAL USER → REDIRECTING TO HOMEPAGE"
-        );
-
-        window.location.href = "/";
+        window.location.href = nextPath;
     };
 
     // ---------------------------------------
@@ -132,34 +152,28 @@ export default function LoginPage() {
 
         setLoading(true);
 
-        // ---------------------------------------
-        // IMPORTANT:
-        // Email confirmation must go to /auth/confirm
-        // ---------------------------------------
-
         const siteUrl =
             window.location.hostname === "localhost"
                 ? window.location.origin
                 : "https://www.daostudios.co";
 
+        const nextPath = getSafeNextPath();
         const confirmationUrl =
-            `${siteUrl}/auth/confirm`;
+            `${siteUrl}/auth/confirm?next=${encodeURIComponent(
+                nextPath
+            )}`;
 
-        console.log(
-            "EMAIL CONFIRMATION URL:",
-            confirmationUrl
-        );
+        const { error: signupError } =
+            await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    emailRedirectTo: confirmationUrl,
+                },
+            });
 
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                emailRedirectTo: confirmationUrl,
-            },
-        });
-
-        if (error) {
-            setError(error.message);
+        if (signupError) {
+            setError(signupError.message);
             setLoading(false);
             return;
         }
@@ -167,7 +181,6 @@ export default function LoginPage() {
         setMessage(
             "Account created. Please check your email and confirm your address before signing in."
         );
-
         setPassword("");
         setLoading(false);
     };
@@ -192,7 +205,7 @@ export default function LoginPage() {
         const resetUrl =
             `${siteUrl}/reset-password`;
 
-        const { error } =
+        const { error: resetError } =
             await supabase.auth.resetPasswordForEmail(
                 email,
                 {
@@ -200,8 +213,8 @@ export default function LoginPage() {
                 }
             );
 
-        if (error) {
-            setError(error.message);
+        if (resetError) {
+            setError(resetError.message);
             setLoading(false);
             return;
         }
@@ -209,13 +222,8 @@ export default function LoginPage() {
         setMessage(
             "If an account exists for this email, a password reset link has been sent."
         );
-
         setLoading(false);
     };
-
-    // ---------------------------------------
-    // FORM SUBMIT
-    // ---------------------------------------
 
     const handleSubmit = (
         event: FormEvent<HTMLFormElement>
@@ -231,10 +239,6 @@ export default function LoginPage() {
         return handleForgotPassword(event);
     };
 
-    // ---------------------------------------
-    // PAGE TEXT
-    // ---------------------------------------
-
     const title =
         mode === "login"
             ? "Welcome Back"
@@ -249,18 +253,11 @@ export default function LoginPage() {
               ? "Create your DAO Studios account."
               : "Enter your email and we'll send you a reset link.";
 
-    // ---------------------------------------
-    // UI
-    // ---------------------------------------
-
     return (
         <main className="loginPage">
             <div className="loginBackground" />
 
             <section className="loginCard">
-
-                {/* LOGO */}
-
                 <div className="loginLogo">
                     <Image
                         src="/logo.png"
@@ -271,14 +268,10 @@ export default function LoginPage() {
                     />
                 </div>
 
-                {/* HEADER */}
-
                 <div className="loginHeader">
                     <h1>{title}</h1>
                     <p>{subtitle}</p>
                 </div>
-
-                {/* SUCCESS MESSAGE */}
 
                 {message && (
                     <div
@@ -289,8 +282,6 @@ export default function LoginPage() {
                     </div>
                 )}
 
-                {/* ERROR MESSAGE */}
-
                 {error && (
                     <div
                         className="loginError"
@@ -300,28 +291,18 @@ export default function LoginPage() {
                     </div>
                 )}
 
-                {/* FORM */}
-
                 <form
                     onSubmit={handleSubmit}
                     className="loginForm"
                 >
-
-                    {/* EMAIL */}
-
                     <div className="formGroup">
-                        <label htmlFor="email">
-                            Email
-                        </label>
-
+                        <label htmlFor="email">Email</label>
                         <input
                             id="email"
                             type="email"
                             value={email}
                             onChange={(event) =>
-                                setEmail(
-                                    event.target.value
-                                )
+                                setEmail(event.target.value)
                             }
                             placeholder="you@example.com"
                             autoComplete="email"
@@ -330,13 +311,9 @@ export default function LoginPage() {
                         />
                     </div>
 
-                    {/* PASSWORD */}
-
                     {mode !== "forgot" && (
                         <div className="formGroup">
-
                             <div className="passwordLabelRow">
-
                                 <label htmlFor="password">
                                     Password
                                 </label>
@@ -347,19 +324,15 @@ export default function LoginPage() {
                                         className="forgotButton"
                                         onClick={() => {
                                             clearMessages();
-                                            setMode(
-                                                "forgot"
-                                            );
+                                            setMode("forgot");
                                         }}
                                     >
                                         Forgot password?
                                     </button>
                                 )}
-
                             </div>
 
                             <div className="passwordWrapper">
-
                                 <input
                                     id="password"
                                     type={
@@ -369,10 +342,7 @@ export default function LoginPage() {
                                     }
                                     value={password}
                                     onChange={(event) =>
-                                        setPassword(
-                                            event.target
-                                                .value
-                                        )
+                                        setPassword(event.target.value)
                                     }
                                     placeholder="Enter your password"
                                     autoComplete={
@@ -390,8 +360,7 @@ export default function LoginPage() {
                                     className="showPasswordButton"
                                     onClick={() =>
                                         setShowPassword(
-                                            (visible) =>
-                                                !visible
+                                            (visible) => !visible
                                         )
                                     }
                                     aria-label={
@@ -404,22 +373,16 @@ export default function LoginPage() {
                                         ? "Hide"
                                         : "Show"}
                                 </button>
-
                             </div>
 
                             {mode === "signup" && (
                                 <span className="passwordHint">
-                                    Minimum 8 characters.
-                                    Use uppercase,
-                                    lowercase, numbers
-                                    and symbols.
+                                    Minimum 8 characters. Use uppercase,
+                                    lowercase, numbers and symbols.
                                 </span>
                             )}
-
                         </div>
                     )}
-
-                    {/* SUBMIT BUTTON */}
 
                     <button
                         type="submit"
@@ -434,25 +397,16 @@ export default function LoginPage() {
                                 ? "Create Account"
                                 : "Send Reset Link"}
                     </button>
-
                 </form>
-
-                {/* DIVIDER */}
 
                 <div className="loginDivider">
                     <span>or</span>
                 </div>
 
-                {/* MODE SWITCH */}
-
                 <div className="loginSwitch">
-
                     {mode === "login" && (
                         <>
-                            <span>
-                                Don't have an account?
-                            </span>
-
+                            <span>Don't have an account?</span>
                             <button
                                 type="button"
                                 onClick={() => {
@@ -467,10 +421,7 @@ export default function LoginPage() {
 
                     {mode === "signup" && (
                         <>
-                            <span>
-                                Already have an account?
-                            </span>
-
+                            <span>Already have an account?</span>
                             <button
                                 type="button"
                                 onClick={() => {
@@ -485,10 +436,7 @@ export default function LoginPage() {
 
                     {mode === "forgot" && (
                         <>
-                            <span>
-                                Remember your password?
-                            </span>
-
+                            <span>Remember your password?</span>
                             <button
                                 type="button"
                                 onClick={() => {
@@ -500,22 +448,13 @@ export default function LoginPage() {
                             </button>
                         </>
                     )}
-
                 </div>
-
-                {/* FOOTER */}
 
                 <div className="loginFooter">
                     <span>© DAO Studios</span>
-
-                    <span>
-                        Secure authentication
-                    </span>
+                    <span>Secure authentication</span>
                 </div>
-
             </section>
-
-            {/* STYLES */}
 
             <style jsx>{`
                 .loginPage {
@@ -533,16 +472,8 @@ export default function LoginPage() {
                     position: absolute;
                     inset: 0;
                     background:
-                        radial-gradient(
-                            circle at 50% 20%,
-                            rgba(180, 0, 0, 0.16),
-                            transparent 38%
-                        ),
-                        linear-gradient(
-                            180deg,
-                            rgba(0, 0, 0, 0.1),
-                            #050505
-                        );
+                        radial-gradient(circle at 50% 20%, rgba(180, 0, 0, 0.16), transparent 38%),
+                        linear-gradient(180deg, rgba(0, 0, 0, 0.1), #050505);
                     pointer-events: none;
                 }
 
@@ -552,15 +483,10 @@ export default function LoginPage() {
                     width: 100%;
                     max-width: 460px;
                     padding: 44px;
-                    border: 1px solid
-                        rgba(255, 255, 255, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
                     border-radius: 24px;
                     background: rgba(15, 15, 15, 0.92);
-                    box-shadow:
-                        0 30px 100px
-                            rgba(0, 0, 0, 0.55),
-                        inset 0 1px 0
-                            rgba(255, 255, 255, 0.04);
+                    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04);
                     backdrop-filter: blur(20px);
                 }
 
@@ -618,45 +544,22 @@ export default function LoginPage() {
                     width: 100%;
                     box-sizing: border-box;
                     padding: 14px 15px;
-                    border: 1px solid
-                        rgba(255, 255, 255, 0.12);
+                    border: 1px solid rgba(255, 255, 255, 0.12);
                     border-radius: 10px;
                     outline: none;
-                    background: rgba(
-                        255,
-                        255,
-                        255,
-                        0.045
-                    );
+                    background: rgba(255, 255, 255, 0.045);
                     color: #ffffff;
                     font-size: 15px;
-                    transition:
-                        border-color 0.2s ease,
-                        background 0.2s ease;
+                    transition: border-color 0.2s ease, background 0.2s ease;
                 }
 
                 .formGroup input::placeholder {
-                    color: rgba(
-                        255,
-                        255,
-                        255,
-                        0.3
-                    );
+                    color: rgba(255, 255, 255, 0.3);
                 }
 
                 .formGroup input:focus {
-                    border-color: rgba(
-                        220,
-                        30,
-                        30,
-                        0.75
-                    );
-                    background: rgba(
-                        255,
-                        255,
-                        255,
-                        0.07
-                    );
+                    border-color: rgba(220, 30, 30, 0.75);
+                    background: rgba(255, 255, 255, 0.07);
                 }
 
                 .formGroup input:disabled {
@@ -672,52 +575,35 @@ export default function LoginPage() {
                     padding-right: 70px;
                 }
 
+                .showPasswordButton,
+                .forgotButton {
+                    border: 0;
+                    background: transparent;
+                    cursor: pointer;
+                }
+
                 .showPasswordButton {
                     position: absolute;
                     right: 10px;
                     top: 50%;
                     transform: translateY(-50%);
-                    border: 0;
-                    background: transparent;
-                    color: rgba(
-                        255,
-                        255,
-                        255,
-                        0.55
-                    );
-                    cursor: pointer;
+                    color: rgba(255, 255, 255, 0.55);
                     font-size: 13px;
                 }
 
-                .showPasswordButton:hover {
-                    color: #ffffff;
-                }
-
-                .forgotButton {
-                    border: 0;
-                    padding: 0;
-                    background: transparent;
-                    color: rgba(
-                        255,
-                        255,
-                        255,
-                        0.5
-                    );
-                    cursor: pointer;
-                    font-size: 12px;
-                }
-
+                .showPasswordButton:hover,
                 .forgotButton:hover {
                     color: #ffffff;
                 }
 
+                .forgotButton {
+                    padding: 0;
+                    color: rgba(255, 255, 255, 0.5);
+                    font-size: 12px;
+                }
+
                 .passwordHint {
-                    color: rgba(
-                        255,
-                        255,
-                        255,
-                        0.38
-                    );
+                    color: rgba(255, 255, 255, 0.38);
                     font-size: 11px;
                     line-height: 1.4;
                 }
@@ -732,9 +618,7 @@ export default function LoginPage() {
                     font-size: 15px;
                     font-weight: 700;
                     cursor: pointer;
-                    transition:
-                        transform 0.2s ease,
-                        opacity 0.2s ease;
+                    transition: transform 0.2s ease, opacity 0.2s ease;
                 }
 
                 .loginSubmit:hover:not(:disabled) {
@@ -751,12 +635,7 @@ export default function LoginPage() {
                     align-items: center;
                     gap: 15px;
                     margin: 26px 0 20px;
-                    color: rgba(
-                        255,
-                        255,
-                        255,
-                        0.3
-                    );
+                    color: rgba(255, 255, 255, 0.3);
                     font-size: 12px;
                 }
 
@@ -765,12 +644,7 @@ export default function LoginPage() {
                     content: "";
                     height: 1px;
                     flex: 1;
-                    background: rgba(
-                        255,
-                        255,
-                        255,
-                        0.1
-                    );
+                    background: rgba(255, 255, 255, 0.1);
                 }
 
                 .loginSwitch {
@@ -779,12 +653,7 @@ export default function LoginPage() {
                     align-items: center;
                     gap: 6px;
                     flex-wrap: wrap;
-                    color: rgba(
-                        255,
-                        255,
-                        255,
-                        0.48
-                    );
+                    color: rgba(255, 255, 255, 0.48);
                     font-size: 13px;
                 }
 
@@ -811,26 +680,14 @@ export default function LoginPage() {
                 }
 
                 .loginError {
-                    border: 1px solid
-                        rgba(255, 70, 70, 0.25);
-                    background: rgba(
-                        255,
-                        40,
-                        40,
-                        0.08
-                    );
+                    border: 1px solid rgba(255, 70, 70, 0.25);
+                    background: rgba(255, 40, 40, 0.08);
                     color: #ff9b9b;
                 }
 
                 .loginMessage {
-                    border: 1px solid
-                        rgba(80, 200, 140, 0.25);
-                    background: rgba(
-                        80,
-                        200,
-                        140,
-                        0.08
-                    );
+                    border: 1px solid rgba(80, 200, 140, 0.25);
+                    background: rgba(80, 200, 140, 0.08);
                     color: #a8e8c5;
                 }
 
@@ -839,14 +696,8 @@ export default function LoginPage() {
                     justify-content: space-between;
                     margin-top: 30px;
                     padding-top: 18px;
-                    border-top: 1px solid
-                        rgba(255, 255, 255, 0.07);
-                    color: rgba(
-                        255,
-                        255,
-                        255,
-                        0.25
-                    );
+                    border-top: 1px solid rgba(255, 255, 255, 0.07);
+                    color: rgba(255, 255, 255, 0.25);
                     font-size: 11px;
                 }
 
