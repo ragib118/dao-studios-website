@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
 import SeriesCard from "./SeriesCard";
 import { series } from "@/data/series";
 
@@ -139,10 +138,6 @@ export default function Featured() {
                             by DAO Studios.
                         </p>
                     </div>
-
-                    <Link href="/series">
-                        Explore All →
-                    </Link>
 
                 </div>
 
