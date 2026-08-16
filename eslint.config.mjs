@@ -5,12 +5,7 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  {
-    rules: {
-      // React escapes JSX text safely; this rule is only a presentation/style check.
-      "react/no-unescaped-entities": "off",
-    },
-  },
+  // Override default ignores of eslint-config-next.
   globalIgnores([
     ".next/**",
     "out/**",
