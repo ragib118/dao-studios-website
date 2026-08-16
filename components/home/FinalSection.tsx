@@ -11,7 +11,7 @@ export default function FinalSection() {
 
     return (
 
-        <section className="finalSection">
+        <section id="journey" className="finalSection">
 
             <div className="finalGlow" />
 
