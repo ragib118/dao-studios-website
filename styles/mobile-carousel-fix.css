@@ -77,3 +77,25 @@
         border-radius: 20px !important;
     }
 }
+
+/* =========================================================
+   DAO STUDIOS — MOBILE / TABLET MODAL LAYER FIX
+   Series/Search overlays must always sit above the fixed
+   navigation so the close button remains accessible.
+========================================================= */
+
+@media (max-width: 1024px) {
+    .searchOverlay {
+        z-index: 20000 !important;
+    }
+
+    .searchOverlayPanel,
+    .seriesOverlayPanel {
+        position: relative !important;
+        z-index: 20001 !important;
+    }
+
+    .searchOverlayClose {
+        z-index: 20002 !important;
+    }
+}
