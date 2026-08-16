@@ -15,6 +15,32 @@ body {
   overflow-x: hidden;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+/* Lenis smooth-scroll support */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
 body {
   min-height: 100vh;
 }
@@ -79,13 +105,9 @@ header .profileWrapper .profileMenu {
   -webkit-backdrop-filter: none !important;
 }
 
-/* Dropdown contents */
-
 header .profileWrapper .profileMenu * {
   box-sizing: border-box;
 }
-
-/* Header information */
 
 header .profileWrapper .profileHeader {
   display: flex !important;
@@ -94,15 +116,11 @@ header .profileWrapper .profileHeader {
   padding: 12px !important;
 }
 
-/* Divider */
-
 header .profileWrapper .profileDivider {
   height: 1px !important;
   margin: 7px 4px !important;
   background: rgba(255, 255, 255, 0.1) !important;
 }
-
-/* Profile/settings button */
 
 header .profileWrapper .profileMenuItem {
   display: flex !important;
@@ -126,8 +144,6 @@ header .profileWrapper .profileMenuItem:hover {
   background: rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
 }
-
-/* Sign out */
 
 header .profileWrapper .profileSignOut {
   display: block !important;
@@ -164,8 +180,6 @@ header .profileWrapper .profileSignOut:hover {
   gap: 16px;
 }
 
-/* Premium white Explore Worlds button */
-
 .heroExploreButton {
   appearance: none;
 
@@ -195,7 +209,6 @@ header .profileWrapper .profileSignOut:hover {
 
 .heroExploreButton:hover {
   background: #f5f5f5;
-
   transform: translateY(-2px);
 
   box-shadow:
