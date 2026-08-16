@@ -2,6 +2,7 @@
 @import "../styles/dropdown.css";
 @import "../styles/responsive.css";
 @import "../styles/mobile-carousel-fix.css";
+@import "../styles/error-pages.css";
 
 * {
   margin: 0;
