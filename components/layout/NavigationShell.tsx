@@ -10,37 +10,72 @@ export default function NavigationShell() {
     const [homeReset, setHomeReset] = useState(0);
 
     useEffect(() => {
-        const handleHomeClick = (event: MouseEvent) => {
+        const handleNavigationClick = (event: MouseEvent) => {
             const target = event.target as Element | null;
-            const homeLink = target?.closest('a[href="/"]');
 
-            if (!homeLink) return;
+            if (!target) return;
 
-            // When Home is already the current route, prevent the browser
-            // from keeping the previous scroll position. Close any open
-            // navigation overlay and always return to the very top.
-            if (pathname === "/") {
-                event.preventDefault();
-                event.stopPropagation();
+            const homeLink = target.closest('a[href="/"]');
 
-                setHomeReset((value) => value + 1);
+            if (homeLink) {
+                // When Home is already the current route, prevent the browser
+                // from keeping the previous scroll position. Close any open
+                // navigation overlay and always return to the very top.
+                if (pathname === "/") {
+                    event.preventDefault();
+                    event.stopPropagation();
 
-                requestAnimationFrame(() => {
-                    lenis?.scrollTo(0, {
-                        duration: 0.9,
+                    setHomeReset((value) => value + 1);
+
+                    requestAnimationFrame(() => {
+                        lenis?.scrollTo(0, {
+                            duration: 0.9,
+                        });
                     });
+                } else {
+                    // On another route, still remount the Header immediately so
+                    // any open overlay is cleared while the route changes.
+                    setHomeReset((value) => value + 1);
+                }
+
+                return;
+            }
+
+            // On mobile, Series and Search are buttons because they open
+            // overlays instead of changing routes. Close the full-screen
+            // hamburger menu after the button action has opened its overlay.
+            // This keeps the overlay visible instead of leaving the mobile
+            // navigation sitting on top of it.
+            const mobileOverlayButton = target.closest(
+                '.mobileMenu button[aria-controls="series-overlay-dialog"], .mobileMenu button[aria-controls="site-search-dialog"]'
+            );
+
+            if (
+                mobileOverlayButton &&
+                window.matchMedia("(max-width: 900px)").matches
+            ) {
+                requestAnimationFrame(() => {
+                    const closeButton = document.querySelector(
+                        ".mobileMenu .closeButton"
+                    ) as HTMLButtonElement | null;
+
+                    closeButton?.click();
                 });
-            } else {
-                // On another route, still remount the Header immediately so
-                // any open overlay is cleared while the route changes.
-                setHomeReset((value) => value + 1);
             }
         };
 
-        document.addEventListener("click", handleHomeClick, true);
+        document.addEventListener(
+            "click",
+            handleNavigationClick,
+            true
+        );
 
         return () => {
-            document.removeEventListener("click", handleHomeClick, true);
+            document.removeEventListener(
+                "click",
+                handleNavigationClick,
+                true
+            );
         };
     }, [pathname]);
 
