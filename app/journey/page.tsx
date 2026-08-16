@@ -45,7 +45,7 @@ export default function JourneyPage() {
                 <section className="journeyStory">
                     <div className="journeyIntro">
                         <span>OUR STORY</span>
-                        <h2>We didn't start with a universe.<br />We started with a vision.</h2>
+                        <h2>We didn&apos;t start with a universe.<br />We started with a vision.</h2>
                         <p>
                             DAO Studios exists to build original worlds from imagination —
                             stories that can grow, characters that can become iconic, and

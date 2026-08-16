@@ -13,25 +13,19 @@ export default function EpisodeSelector({
     series,
     onEpisodeChange,
 }: Props) {
-    // Safely handle series that don't have seasons yet
-    const seasons = Array.isArray(series.seasons)
-        ? series.seasons
-        : [];
+    const seasons = useMemo(
+        () => (Array.isArray(series.seasons) ? series.seasons : []),
+        [series.seasons]
+    );
 
-    // If there are no seasons, don't crash the page
-    if (seasons.length === 0) {
-        return null;
-    }
-
-    const [selectedSeason, setSelectedSeason] = useState(
-        String(seasons[0].number)
+    const [selectedSeason, setSelectedSeason] = useState(() =>
+        String(seasons[0]?.number ?? "")
     );
 
     const season = useMemo(
         () =>
             seasons.find(
-                (s) =>
-                    String(s.number) === selectedSeason
+                (s) => String(s.number) === selectedSeason
             ) ?? seasons[0],
         [seasons, selectedSeason]
     );
@@ -40,29 +34,25 @@ export default function EpisodeSelector({
         season?.episodes?.[0]?.slug ?? ""
     );
 
-    // Keep the selector synchronized when the series changes
     useEffect(() => {
         const firstSeason = seasons[0];
 
         if (!firstSeason) {
+            setSelectedSeason("");
+            setSelectedEpisode("");
             return;
         }
 
         setSelectedSeason(String(firstSeason.number));
+        setSelectedEpisode(firstSeason.episodes?.[0]?.slug ?? "");
+    }, [seasons]);
 
-        setSelectedEpisode(
-            firstSeason.episodes?.[0]?.slug ?? ""
-        );
-    }, [series, seasons]);
-
-    // If the selected season has no episodes, don't crash
-    if (!season || !Array.isArray(season.episodes)) {
+    if (seasons.length === 0 || !season || !Array.isArray(season.episodes)) {
         return null;
     }
 
     const changeEpisode = (episodeSlug: string) => {
         setSelectedEpisode(episodeSlug);
-
         onEpisodeChange?.(episodeSlug);
     };
 
@@ -86,18 +76,14 @@ export default function EpisodeSelector({
                     setSelectedSeason(value);
 
                     const newSeason = seasons.find(
-                        (season) =>
-                            String(season.number) === value
+                        (season) => String(season.number) === value
                     );
 
                     if (newSeason) {
-                        const firstEpisode =
-                            newSeason.episodes?.[0];
+                        const firstEpisode = newSeason.episodes?.[0];
 
                         if (firstEpisode) {
-                            changeEpisode(
-                                firstEpisode.slug
-                            );
+                            changeEpisode(firstEpisode.slug);
                         } else {
                             setSelectedEpisode("");
                         }
@@ -109,12 +95,10 @@ export default function EpisodeSelector({
                 <Dropdown
                     label="Episode"
                     value={selectedEpisode}
-                    options={season.episodes.map(
-                        (episode) => ({
-                            value: episode.slug,
-                            label: `Episode ${episode.number} • ${episode.title}`,
-                        })
-                    )}
+                    options={season.episodes.map((episode) => ({
+                        value: episode.slug,
+                        label: `Episode ${episode.number} • ${episode.title}`,
+                    }))}
                     onChange={changeEpisode}
                 />
             )}
