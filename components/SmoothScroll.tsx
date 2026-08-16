@@ -10,43 +10,33 @@ export default function SmoothScroll() {
     useEffect(() => {
 
         lenis = new Lenis({
-
-            duration: 1.2,
-
+            duration: 0.9,
             smoothWheel: true,
+            wheelMultiplier: 0.9,
+            touchMultiplier: 1.2,
+            easing: (t) => 1 - Math.pow(1 - t, 3),
 
-            touchMultiplier: 1.5,
-
-            // Prevent Lenis from handling scroll
-            // inside dropdowns, modals, overlays, etc.
             prevent: (node) => {
-
                 return !!node?.closest("[data-lenis-prevent]");
-
             },
-
         });
 
-        function raf(time: number) {
+        let animationFrame: number;
 
+        const raf = (time: number) => {
             lenis?.raf(time);
+            animationFrame = requestAnimationFrame(raf);
+        };
 
-            requestAnimationFrame(raf);
-
-        }
-
-        requestAnimationFrame(raf);
+        animationFrame = requestAnimationFrame(raf);
 
         return () => {
-
+            cancelAnimationFrame(animationFrame);
             lenis?.destroy();
-
             lenis = null;
-
         };
 
     }, []);
 
     return null;
-
 }
