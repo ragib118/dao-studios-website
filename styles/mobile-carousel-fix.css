@@ -20,7 +20,8 @@
         padding: 10px 2px 24px !important;
         scroll-snap-type: x mandatory !important;
         -webkit-overflow-scrolling: touch !important;
-        touch-action: pan-x !important;
+        /* Allow both page scrolling and horizontal carousel swiping. */
+        touch-action: pan-x pan-y !important;
     }
 
     /* SeriesCard is inside a Next.js Link. Size the Link itself. */
