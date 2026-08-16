@@ -32,7 +32,7 @@ export default function Footer() {
 
                     <Link href="/#discover-worlds">Originals</Link>
 
-                    <Link href="/#journey">Journey</Link>
+                    <Link href="/journey">Journey</Link>
 
                 </nav>
 
