@@ -8,34 +8,37 @@ type VideoPlayerProps = {
     onClose: () => void;
 };
 
+const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
+
+function normalizeYouTubeId(value: string | null) {
+    return value && YOUTUBE_ID_PATTERN.test(value) ? value : null;
+}
+
 function getYouTubeId(url: string) {
     try {
         const parsed = new URL(url);
+        const hostname = parsed.hostname.toLowerCase();
 
-        if (parsed.hostname.includes("youtube.com")) {
-            // YouTube Shorts
+        if (hostname === "youtube.com" || hostname === "www.youtube.com") {
             if (parsed.pathname.startsWith("/shorts/")) {
-                return parsed.pathname
-                    .split("/shorts/")[1]
-                    ?.split("/")[0];
+                return normalizeYouTubeId(
+                    parsed.pathname.split("/shorts/")[1]?.split("/")[0] ?? null
+                );
             }
 
-            // Normal YouTube video
             if (parsed.pathname === "/watch") {
-                return parsed.searchParams.get("v");
+                return normalizeYouTubeId(parsed.searchParams.get("v"));
             }
 
-            // YouTube embed
             if (parsed.pathname.startsWith("/embed/")) {
-                return parsed.pathname
-                    .split("/embed/")[1]
-                    ?.split("/")[0];
+                return normalizeYouTubeId(
+                    parsed.pathname.split("/embed/")[1]?.split("/")[0] ?? null
+                );
             }
         }
 
-        // youtu.be/VIDEO_ID
-        if (parsed.hostname === "youtu.be") {
-            return parsed.pathname.slice(1);
+        if (hostname === "youtu.be") {
+            return normalizeYouTubeId(parsed.pathname.slice(1).split("/")[0] ?? null);
         }
 
         return null;
@@ -47,9 +50,10 @@ function getYouTubeId(url: string) {
 function isYouTubeShort(url: string) {
     try {
         const parsed = new URL(url);
+        const hostname = parsed.hostname.toLowerCase();
 
         return (
-            parsed.hostname.includes("youtube.com") &&
+            (hostname === "youtube.com" || hostname === "www.youtube.com") &&
             parsed.pathname.startsWith("/shorts/")
         );
     } catch {
@@ -63,30 +67,17 @@ export default function VideoPlayer({
     onClose,
 }: VideoPlayerProps) {
     const youtubeId = getYouTubeId(src);
-
     const isShort = isYouTubeShort(src);
+    const orientation = isShort ? "vertical" : "horizontal";
 
-    const orientation = isShort
-        ? "vertical"
-        : "horizontal";
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
-    const [isFullscreen, setIsFullscreen] =
-        useState(false);
-
-    /*
-     * Detect when YouTube enters/exits fullscreen.
-     */
     useEffect(() => {
         const handleFullscreenChange = () => {
-            setIsFullscreen(
-                Boolean(document.fullscreenElement)
-            );
+            setIsFullscreen(Boolean(document.fullscreenElement));
         };
 
-        document.addEventListener(
-            "fullscreenchange",
-            handleFullscreenChange
-        );
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
 
         return () => {
             document.removeEventListener(
@@ -96,55 +87,27 @@ export default function VideoPlayer({
         };
     }, []);
 
-    /*
-     * ESC closes the DAO player only when
-     * we are not already in fullscreen.
-     */
     useEffect(() => {
-        const handleKeyDown = (
-            event: KeyboardEvent
-        ) => {
-            if (
-                event.key === "Escape" &&
-                !document.fullscreenElement
-            ) {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape" && !document.fullscreenElement) {
                 onClose();
             }
         };
 
-        window.addEventListener(
-            "keydown",
-            handleKeyDown
-        );
+        window.addEventListener("keydown", handleKeyDown);
 
         return () => {
-            window.removeEventListener(
-                "keydown",
-                handleKeyDown
-            );
+            window.removeEventListener("keydown", handleKeyDown);
         };
     }, [onClose]);
 
-    /*
-     * Unsupported source.
-     */
     if (!youtubeId) {
         return (
             <div className="videoPlayerOverlay">
                 <div className="videoPlayerError">
-                    <strong>
-                        Video unavailable
-                    </strong>
-
-                    <span>
-                        This video source is not
-                        supported.
-                    </span>
-
-                    <button
-                        type="button"
-                        onClick={onClose}
-                    >
+                    <strong>Video unavailable</strong>
+                    <span>This video source is not supported.</span>
+                    <button type="button" onClick={onClose}>
                         Close
                     </button>
                 </div>
@@ -156,35 +119,16 @@ export default function VideoPlayer({
         <div className="videoPlayerOverlay">
             <div
                 className={`videoPlayer videoPlayer--${orientation} ${
-                    isFullscreen
-                        ? "videoPlayer--fullscreen"
-                        : ""
+                    isFullscreen ? "videoPlayer--fullscreen" : ""
                 }`}
             >
-                {/* =========================
-                    YOUTUBE VIDEO
-                ========================== */}
-
                 <iframe
                     className="videoPlayerYouTube"
                     src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`}
                     title={title}
-                    allow="
-                        accelerometer;
-                        autoplay;
-                        clipboard-write;
-                        encrypted-media;
-                        gyroscope;
-                        picture-in-picture;
-                        fullscreen;
-                        web-share
-                    "
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen; web-share"
                     allowFullScreen
                 />
-
-                {/* =========================
-                    DAO CLOSE BUTTON
-                ========================== */}
 
                 <button
                     type="button"
