@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { GoogleTagManager } from "@next/third-parties/google";
 
 import "./globals.css";
 import "@/styles/dropdown.css";
@@ -196,7 +195,7 @@ export default function RootLayout({
             __html: JSON.stringify([
               organizationSchema,
               websiteSchema,
-            ]),
+            ]).replace(/</g, "\\u003c"),
           }}
         />
 
