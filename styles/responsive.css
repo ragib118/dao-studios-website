@@ -1,0 +1,544 @@
+/* =========================================================
+   DAO STUDIOS — GLOBAL RESPONSIVE LAYER
+   Keeps the desktop composition and visual hierarchy intact
+   while preventing mobile collapse / overflow.
+========================================================= */
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* ---------------- Header ---------------- */
+
+@media (max-width: 900px) {
+    .header nav {
+        width: calc(100% - 32px);
+        height: 76px;
+    }
+
+    .logo img {
+        height: 52px;
+        width: auto;
+    }
+
+    .menuButton {
+        width: 48px;
+        height: 48px;
+        flex: 0 0 48px;
+    }
+
+    .mobileMenu {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 480px) {
+    .header nav {
+        width: calc(100% - 24px);
+        height: 70px;
+    }
+
+    .logo img {
+        height: 48px;
+    }
+}
+
+/* ---------------- Hero ---------------- */
+
+@media (max-width: 900px) {
+    .hero {
+        min-height: 100svh;
+        padding: 100px 20px 60px;
+    }
+
+    .heroOverlay {
+        width: min(94vw, 900px);
+    }
+
+    .heroContent h1 {
+        font-size: clamp(3rem, 10vw, 5.5rem);
+    }
+
+    .heroContent p {
+        width: min(92%, 620px);
+    }
+
+    .heroButtons {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .heroButtons button {
+        flex: 1 1 210px;
+        width: auto;
+        min-width: 0;
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 520px) {
+    .hero {
+        padding: 92px 16px 48px;
+    }
+
+    .heroContent h1 {
+        font-size: clamp(2.65rem, 13vw, 4rem);
+    }
+
+    .heroContent p {
+        font-size: 1rem;
+        line-height: 1.65;
+        margin-bottom: 32px;
+    }
+
+    .heroButtons {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .heroButtons button {
+        width: min(100%, 330px);
+        max-width: 330px;
+        flex: 0 0 auto;
+    }
+}
+
+/* ---------------- Featured / Series Cards ---------------- */
+
+@media (max-width: 992px) {
+    .featured {
+        padding: 90px 0 80px;
+    }
+
+    .featuredContainer {
+        width: calc(100% - 32px);
+    }
+
+    .sectionHeader {
+        margin-bottom: 34px;
+    }
+
+    .featuredCarousel {
+        gap: 16px;
+        padding-left: 4px;
+        padding-right: 4px;
+        scroll-snap-type: x mandatory;
+    }
+
+    .seriesCard {
+        flex: 0 0 calc((100% - 32px) / 3) !important;
+        border-radius: 20px;
+    }
+
+    .seriesOverlay {
+        opacity: 1;
+        padding: 18px;
+        background: linear-gradient(
+            to top,
+            rgba(0,0,0,.95) 0%,
+            rgba(0,0,0,.55) 42%,
+            transparent 75%
+        );
+    }
+
+    .seriesContent {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    .seriesContent p {
+        display: none;
+    }
+
+    .seriesContent h3 {
+        font-size: 19px;
+    }
+
+    .seriesContent button {
+        padding: 9px 16px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 680px) {
+    .featured {
+        padding: 72px 0 64px;
+    }
+
+    .featuredContainer {
+        width: calc(100% - 24px);
+    }
+
+    .sectionHeader {
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 26px;
+    }
+
+    .sectionHeader h2 {
+        font-size: clamp(30px, 9vw, 42px);
+    }
+
+    .sectionHeader p {
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .featuredCarousel {
+        gap: 12px;
+        padding-bottom: 16px;
+    }
+
+    .seriesCard {
+        flex: 0 0 calc((100% - 12px) / 2) !important;
+        border-radius: 18px;
+    }
+
+    .seriesContent h3 {
+        font-size: 17px;
+    }
+}
+
+/* ---------------- Stats / Story Sections ---------------- */
+
+@media (max-width: 1024px) {
+    .journeyIntro {
+        width: min(900px, calc(100% - 40px));
+        padding-top: 110px;
+        padding-left: 0;
+        padding-right: 0;
+        margin-bottom: 80px;
+    }
+
+    .storyBlock {
+        min-height: 82svh;
+        height: auto;
+        padding: 100px 28px;
+    }
+
+    .storyContent {
+        width: min(900px, 100%);
+    }
+
+    .storyBlock.left .storyText,
+    .storyBlock.right .storyText {
+        max-width: 680px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .storyBlock.left .goldLine,
+    .storyBlock.right .goldLine {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .storyBlock.left .storyText p,
+    .storyBlock.right .storyText p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .journeyIntro {
+        width: calc(100% - 32px);
+        padding-top: 86px;
+        margin-bottom: 64px;
+    }
+
+    .journeyIntro span {
+        font-size: 10px;
+        letter-spacing: 5px;
+    }
+
+    .journeyIntro h2 {
+        font-size: clamp(36px, 11vw, 52px);
+    }
+
+    .journeyIntro p {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    .storyBlock {
+        min-height: 78svh;
+        padding: 72px 20px;
+    }
+
+    .backgroundWord {
+        font-size: 26vw;
+        letter-spacing: 4px;
+    }
+
+    .storyValue {
+        font-size: clamp(68px, 21vw, 100px);
+    }
+
+    .storyText h3 {
+        font-size: clamp(28px, 8vw, 38px);
+    }
+
+    .storyText h4 {
+        font-size: 21px;
+    }
+
+    .storyText p {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+}
+
+/* ---------------- Final Section ---------------- */
+
+@media (max-width: 600px) {
+    .finalSection {
+        min-height: 78svh;
+        padding: 88px 18px 76px;
+    }
+
+    .finalContent {
+        width: 100%;
+        max-width: 700px;
+    }
+
+    .finalContent h2 {
+        font-size: clamp(28px, 8.5vw, 38px);
+        line-height: 1.1;
+    }
+
+    .finalContent p {
+        max-width: 520px;
+        font-size: 14px;
+        line-height: 1.75;
+    }
+}
+
+/* ---------------- Journey Page ---------------- */
+
+@media (max-width: 700px) {
+    .journeyHero {
+        min-height: 76svh;
+        padding: 110px 18px 80px;
+    }
+
+    .journeyHeroContent {
+        width: 100%;
+    }
+
+    .journeyHero h1 {
+        font-size: clamp(42px, 12vw, 72px);
+    }
+
+    .journeyHero p {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    .journeyStory {
+        width: calc(100% - 32px);
+        padding: 78px 0 100px;
+    }
+
+    .journeyMilestone {
+        grid-template-columns: 52px minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    .journeyMarker {
+        width: 52px;
+        height: 52px;
+    }
+
+    .journeyMilestoneContent h3 {
+        font-size: clamp(25px, 7vw, 38px);
+    }
+
+    .journeyMilestoneContent p {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    .journeyFuture {
+        min-height: 70svh;
+        padding: 80px 18px;
+    }
+
+    .journeyFuture h2 {
+        font-size: clamp(38px, 11vw, 68px);
+    }
+}
+
+/* ---------------- Search / Series Overlays ---------------- */
+
+@media (max-width: 900px) {
+    .searchOverlay {
+        padding: 18px;
+    }
+
+    .searchOverlayPanel,
+    .seriesOverlayPanel {
+        width: min(94vw, 900px) !important;
+        max-width: 900px;
+        max-height: calc(100svh - 36px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 700px) {
+    .searchOverlayPanel,
+    .seriesOverlayPanel {
+        width: calc(100vw - 24px) !important;
+        max-height: calc(100svh - 24px);
+        padding: 42px 20px 24px !important;
+        border-radius: 22px;
+    }
+
+    .searchOverlayIntro h2 {
+        font-size: clamp(34px, 10vw, 48px);
+    }
+
+    .searchOverlayIntro p {
+        font-size: 14px;
+    }
+
+    .searchInputShell {
+        width: 100%;
+        margin-top: 30px;
+    }
+
+    .searchTrending ul {
+        gap: 8px;
+    }
+
+    .searchTrending button {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .seriesOverlayGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+        margin-top: 28px !important;
+    }
+
+    .seriesOverlayCard {
+        width: 100% !important;
+        margin: 0 !important;
+        aspect-ratio: 2 / 3 !important;
+        border-radius: 14px !important;
+    }
+
+    .seriesOverlayTitle {
+        left: 12px !important;
+        right: 12px !important;
+        bottom: 12px !important;
+        font-size: 17px !important;
+    }
+
+    .seriesOverlayBadge {
+        top: 10px !important;
+        left: 10px !important;
+        padding: 5px 7px !important;
+        font-size: 8px !important;
+    }
+}
+
+@media (max-width: 390px) {
+    .seriesOverlayGrid {
+        grid-template-columns: 1fr !important;
+        max-width: 280px;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+/* ---------------- Video Player ---------------- */
+
+@media (max-width: 700px) {
+    .videoPlayer,
+    .videoPlayer--horizontal {
+        width: calc(100vw - 24px);
+        max-width: none;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        border-radius: 12px;
+    }
+
+    .videoPlayer--vertical {
+        width: min(88vw, 560px);
+        height: min(82svh, 900px);
+        aspect-ratio: auto;
+    }
+
+    .videoPlayerClose {
+        top: 10px;
+        right: 10px;
+        width: 38px;
+        height: 38px;
+        font-size: 22px;
+    }
+}
+
+/* ---------------- Footer ---------------- */
+
+@media (max-width: 700px) {
+    .footer {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .footerContainer {
+        width: 100%;
+        max-width: 520px;
+    }
+
+    .footerNav,
+    .footerSocial {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 18px;
+    }
+}
+
+/* ---------------- Touch Devices ---------------- */
+
+@media (hover: none) and (pointer: coarse) {
+    .seriesCard:hover,
+    .seriesOverlayCard:hover {
+        transform: none;
+    }
+
+    .carouselButton {
+        display: none !important;
+    }
+}
+
+/* ---------------- Prevent accidental horizontal layout breakage ---------------- */
+
+@media (max-width: 900px) {
+    .featuredContainer,
+    .storyContent,
+    .journeyStory,
+    .journeyHeroContent,
+    .finalContent,
+    .footerContainer {
+        min-width: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    a,
+    button {
+        overflow-wrap: anywhere;
+    }
+}
