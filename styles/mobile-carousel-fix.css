@@ -53,20 +53,29 @@
         opacity: 1 !important;
     }
 
-    /* First-visit hint: make the swipe affordance obvious without
-       changing the card layout. It fades away automatically. */
+    /*
+       Swipe hint: place it in the natural gap ABOVE the cards.
+       It never overlaps card content or buttons and remains visible
+       until a genuine horizontal swipe is detected by Featured.tsx.
+    */
+    .carouselWrapper {
+        position: relative !important;
+    }
+
     .swipeHint {
         position: absolute !important;
         left: 50% !important;
-        bottom: 42px !important;
+        top: -44px !important;
+        bottom: auto !important;
         z-index: 20 !important;
         display: flex !important;
         align-items: center !important;
+        justify-content: center !important;
         gap: 9px !important;
-        padding: 10px 15px !important;
-        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        padding: 8px 14px !important;
+        border: 1px solid rgba(255, 255, 255, 0.14) !important;
         border-radius: 999px !important;
-        background: rgba(0, 0, 0, 0.78) !important;
+        background: rgba(0, 0, 0, 0.72) !important;
         backdrop-filter: blur(10px) !important;
         -webkit-backdrop-filter: blur(10px) !important;
         color: #fff !important;
@@ -129,9 +138,9 @@
     }
 
     .swipeHint {
-        bottom: 34px !important;
+        top: -42px !important;
         font-size: 12px !important;
-        padding: 9px 13px !important;
+        padding: 8px 13px !important;
     }
 }
 
