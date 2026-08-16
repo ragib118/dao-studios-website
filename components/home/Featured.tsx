@@ -17,7 +17,6 @@ export default function Featured() {
         if (!slider) return;
 
         const handleWheel = (e: WheelEvent) => {
-            // Ignore horizontal scrolling (trackpads)
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
 
             const atStart = slider.scrollLeft <= 0;
@@ -25,7 +24,6 @@ export default function Featured() {
                 slider.scrollLeft + slider.clientWidth >=
                 slider.scrollWidth - 1;
 
-            // Let the page scroll when we've reached either end
             if (
                 (e.deltaY < 0 && atStart) ||
                 (e.deltaY > 0 && atEnd)
@@ -80,11 +78,8 @@ export default function Featured() {
         isDragging.current = true;
         sliderRef.current.classList.add("dragging");
 
-        startX.current =
-            e.pageX - sliderRef.current.offsetLeft;
-
-        scrollLeft.current =
-            sliderRef.current.scrollLeft;
+        startX.current = e.pageX - sliderRef.current.offsetLeft;
+        scrollLeft.current = sliderRef.current.scrollLeft;
     };
 
     const handleMouseLeave = () => {
@@ -109,40 +104,28 @@ export default function Featured() {
         e.preventDefault();
 
         const slider = sliderRef.current;
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - startX.current) * 1.5;
 
-        const x =
-            e.pageX - slider.offsetLeft;
-
-        const walk =
-            (x - startX.current) * 1.5;
-
-        slider.scrollLeft =
-            scrollLeft.current - walk;
+        slider.scrollLeft = scrollLeft.current - walk;
     };
 
     return (
-        <section
-            id="discover-worlds"
-            className="featured"
-        >
+        <section id="discover-worlds" className="featured">
             <div className="featuredContainer">
 
                 <div className="sectionHeader">
-
                     <div>
                         <h2>Discover Our Worlds</h2>
-
                         <p>
                             Every world tells a different story.
                             Explore adventures created exclusively
                             by DAO Studios.
                         </p>
                     </div>
-
                 </div>
 
                 <div className="carouselWrapper">
-
                     <button
                         className="carouselButton left"
                         onClick={() => scroll("left")}
@@ -154,6 +137,7 @@ export default function Featured() {
                     <div
                         ref={sliderRef}
                         className="featuredCarousel"
+                        data-lenis-prevent
                         onMouseDown={handleMouseDown}
                         onMouseMove={handleMouseMove}
                         onMouseUp={handleMouseUp}
@@ -176,7 +160,6 @@ export default function Featured() {
                     >
                         ❯
                     </button>
-
                 </div>
 
             </div>
