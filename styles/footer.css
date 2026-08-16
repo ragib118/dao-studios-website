@@ -135,11 +135,21 @@
     .footerNav{
 
         gap:25px;
+        flex-direction:row;
+        flex-wrap:nowrap;
+        align-items:center;
+        justify-content:center;
+        white-space:nowrap;
     }
 
     .footerSocial{
 
         gap:20px;
+        flex-direction:row;
+        flex-wrap:nowrap;
+        align-items:center;
+        justify-content:center;
+        white-space:nowrap;
     }
 
 }
@@ -160,16 +170,23 @@
 
     .footerNav{
 
-        flex-direction:column;
-
-        gap:18px;
+        flex-direction:row;
+        flex-wrap:nowrap;
+        gap:clamp(18px, 6vw, 30px);
+        white-space:nowrap;
     }
 
     .footerSocial{
 
-        flex-direction:column;
+        flex-direction:row;
+        flex-wrap:nowrap;
+        gap:clamp(16px, 5vw, 26px);
+        white-space:nowrap;
+    }
 
-        gap:18px;
+    .footerNav a,
+    .footerSocial a{
+        flex:0 0 auto;
     }
 
 }
