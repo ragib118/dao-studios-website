@@ -1,0 +1,65 @@
+/* =========================================================
+   DAO STUDIOS — MOBILE / TABLET SERIES CAROUSEL
+   Keep exactly 2 cards visible; remaining cards stay swipeable.
+========================================================= */
+
+@media (max-width: 1024px) {
+    .featuredContainer {
+        width: calc(100% - 40px) !important;
+        max-width: none !important;
+    }
+
+    .featuredCarousel {
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 16px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding: 10px 2px 24px !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-x !important;
+    }
+
+    .featuredCarousel .seriesCard {
+        flex: 0 0 calc((100% - 16px) / 2) !important;
+        width: calc((100% - 16px) / 2) !important;
+        min-width: calc((100% - 16px) / 2) !important;
+        max-width: calc((100% - 16px) / 2) !important;
+        scroll-snap-align: start !important;
+    }
+
+    /* Mobile should not depend on hover to reveal the card title. */
+    .featuredCarousel .seriesOverlay {
+        opacity: 1 !important;
+    }
+
+    .featuredCarousel .seriesContent {
+        transform: translateY(0) !important;
+        opacity: 1 !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .featured {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .featuredContainer {
+        width: calc(100% - 32px) !important;
+    }
+
+    .featuredCarousel {
+        gap: 14px !important;
+    }
+
+    .featuredCarousel .seriesCard {
+        flex-basis: calc((100% - 14px) / 2) !important;
+        width: calc((100% - 14px) / 2) !important;
+        min-width: calc((100% - 14px) / 2) !important;
+        max-width: calc((100% - 14px) / 2) !important;
+        border-radius: 20px !important;
+    }
+}
