@@ -1,6 +1,7 @@
 @import "../styles/series.css";
 @import "../styles/dropdown.css";
 @import "../styles/responsive.css";
+@import "../styles/mobile-carousel-fix.css";
 
 * {
   margin: 0;
