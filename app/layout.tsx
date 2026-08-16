@@ -5,7 +5,7 @@ import { GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import "@/styles/dropdown.css";
 
-import Header from "@/components/layout/Header";
+import NavigationShell from "@/components/layout/NavigationShell";
 import SmoothScroll from "@/components/SmoothScroll";
 
 import "../styles/theme.css";
@@ -202,7 +202,7 @@ export default function RootLayout({
 
         <SmoothScroll />
 
-        <Header />
+        <NavigationShell />
 
         {children}
       </body>
