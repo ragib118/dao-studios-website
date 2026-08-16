@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { motion } from "framer-motion";
 import "@/styles/journey.css";
@@ -33,10 +35,7 @@ export default function JourneyPage() {
                 <div className="journeyHeroContent">
                     <span className="journeyEyebrow">THE DAO STUDIOS JOURNEY</span>
                     <h1>FROM ONE IDEA<br />TO MANY WORLDS.</h1>
-                    <p>
-                        Every studio has a beginning.<br />
-                        This is ours.
-                    </p>
+                    <p>Every studio has a beginning.<br />This is ours.</p>
                     <div className="journeyGoldLine" />
                 </div>
             </section>
