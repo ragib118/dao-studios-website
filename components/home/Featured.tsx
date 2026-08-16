@@ -7,59 +7,47 @@ import { series } from "@/data/series";
 export default function Featured() {
     const sliderRef = useRef<HTMLDivElement | null>(null);
     const [showSwipeHint, setShowSwipeHint] = useState(false);
-    const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const hasShownHint = useRef(false);
 
     const isDragging = useRef(false);
     const startX = useRef(0);
     const scrollLeft = useRef(0);
 
+    const touchStartX = useRef(0);
+    const touchStartY = useRef(0);
+
     useEffect(() => {
         const slider = sliderRef.current;
-
         if (!slider) return;
 
         const handleWheel = (e: WheelEvent) => {
-            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-
-            const atStart = slider.scrollLeft <= 0;
-            const atEnd =
-                slider.scrollLeft + slider.clientWidth >=
-                slider.scrollWidth - 1;
-
-            if (
-                (e.deltaY < 0 && atStart) ||
-                (e.deltaY > 0 && atEnd)
-            ) {
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                if (Math.abs(e.deltaX) > 8) setShowSwipeHint(false);
                 return;
             }
+
+            const atStart = slider.scrollLeft <= 0;
+            const atEnd = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 1;
+
+            if ((e.deltaY < 0 && atStart) || (e.deltaY > 0 && atEnd)) return;
 
             e.preventDefault();
             slider.scrollLeft += e.deltaY;
         };
 
-        slider.addEventListener("wheel", handleWheel, {
-            passive: false,
-        });
-
-        return () => {
-            slider.removeEventListener("wheel", handleWheel);
-        };
+        slider.addEventListener("wheel", handleWheel, { passive: false });
+        return () => slider.removeEventListener("wheel", handleWheel);
     }, []);
 
     useEffect(() => {
         const stopDragging = () => {
             if (!sliderRef.current) return;
-
             isDragging.current = false;
             sliderRef.current.classList.remove("dragging");
         };
 
         window.addEventListener("mouseup", stopDragging);
-
-        return () => {
-            window.removeEventListener("mouseup", stopDragging);
-        };
+        return () => window.removeEventListener("mouseup", stopDragging);
     }, []);
 
     useEffect(() => {
@@ -72,87 +60,82 @@ export default function Featured() {
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (!entry.isIntersecting || hasShownHint.current) return;
-
                 hasShownHint.current = true;
                 setShowSwipeHint(true);
-
-                hintTimerRef.current = setTimeout(() => {
-                    setShowSwipeHint(false);
-                }, 2200);
-
                 observer.disconnect();
             },
             { threshold: 0.45 }
         );
 
         observer.observe(slider);
-
-        return () => {
-            observer.disconnect();
-            if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
-        };
+        return () => observer.disconnect();
     }, []);
-
-    const dismissSwipeHint = () => {
-        setShowSwipeHint(false);
-        if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
-    };
 
     const scroll = (direction: "left" | "right") => {
         if (!sliderRef.current) return;
 
         const amount = sliderRef.current.clientWidth * 0.8;
-
         sliderRef.current.scrollBy({
             left: direction === "right" ? amount : -amount,
             behavior: "smooth",
         });
+        setShowSwipeHint(false);
     };
 
-    const handleMouseDown = (
-        e: React.MouseEvent<HTMLDivElement>
-    ) => {
+    const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+        const touch = e.touches[0];
+        touchStartX.current = touch.clientX;
+        touchStartY.current = touch.clientY;
+    };
+
+    const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+        const touch = e.touches[0];
+        const deltaX = touch.clientX - touchStartX.current;
+        const deltaY = touch.clientY - touchStartY.current;
+
+        // Keep the hint while the user is vertically scrolling. Dismiss it
+        // only when the gesture is clearly a horizontal carousel swipe.
+        if (Math.abs(deltaX) > 16 && Math.abs(deltaX) > Math.abs(deltaY) * 1.15) {
+            setShowSwipeHint(false);
+        }
+    };
+
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!sliderRef.current) return;
 
         isDragging.current = true;
         sliderRef.current.classList.add("dragging");
-
         startX.current = e.pageX - sliderRef.current.offsetLeft;
         scrollLeft.current = sliderRef.current.scrollLeft;
     };
 
     const handleMouseLeave = () => {
         if (!sliderRef.current) return;
-
         isDragging.current = false;
         sliderRef.current.classList.remove("dragging");
     };
 
     const handleMouseUp = () => {
         if (!sliderRef.current) return;
-
         isDragging.current = false;
         sliderRef.current.classList.remove("dragging");
     };
 
-    const handleMouseMove = (
-        e: React.MouseEvent<HTMLDivElement>
-    ) => {
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!isDragging.current || !sliderRef.current) return;
 
         e.preventDefault();
-
         const slider = sliderRef.current;
         const x = e.pageX - slider.offsetLeft;
         const walk = (x - startX.current) * 1.5;
 
+        if (Math.abs(walk) > 16) setShowSwipeHint(false);
         slider.scrollLeft = scrollLeft.current - walk;
     };
 
     return (
         <section id="discover-worlds" className="featured">
             <div className="featuredContainer">
-
                 <div className="sectionHeader">
                     <div>
                         <h2>Discover Our Worlds</h2>
@@ -181,7 +164,8 @@ export default function Featured() {
                         onMouseMove={handleMouseMove}
                         onMouseUp={handleMouseUp}
                         onMouseLeave={handleMouseLeave}
-                        onTouchStart={dismissSwipeHint}
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
                     >
                         {series.map((item) => (
                             <SeriesCard
@@ -209,7 +193,6 @@ export default function Featured() {
                         ❯
                     </button>
                 </div>
-
             </div>
         </section>
     );
