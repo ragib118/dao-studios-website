@@ -1,0 +1,25 @@
+/* DAO Studios — mobile/tablet featured carousel fix */
+
+@media (max-width: 1024px) {
+  .featuredCarousel > a {
+    display: block !important;
+    flex: 0 0 calc((100% - 18px) / 2) !important;
+    width: calc((100% - 18px) / 2) !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .featuredCarousel > a > .seriesCard {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    flex: none !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .featuredCarousel > a {
+    flex-basis: calc((100% - 12px) / 2) !important;
+    width: calc((100% - 12px) / 2) !important;
+  }
+}
