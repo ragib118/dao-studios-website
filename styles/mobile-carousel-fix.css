@@ -4,6 +4,11 @@
    the same horizontal carousel and are swipeable.
 ========================================================= */
 
+/* Swipe hint is only relevant on mobile/tablet. */
+.swipeHint {
+    display: none !important;
+}
+
 @media (max-width: 1024px) {
     .featuredContainer {
         width: calc(100% - 40px) !important;
