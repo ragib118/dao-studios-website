@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import SeriesCard from "./SeriesCard";
 import { series } from "@/data/series";
 
 export default function Featured() {
     const sliderRef = useRef<HTMLDivElement | null>(null);
+    const [showSwipeHint, setShowSwipeHint] = useState(false);
+    const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const hasShownHint = useRef(false);
 
     const isDragging = useRef(false);
     const startX = useRef(0);
@@ -58,6 +61,42 @@ export default function Featured() {
             window.removeEventListener("mouseup", stopDragging);
         };
     }, []);
+
+    useEffect(() => {
+        const slider = sliderRef.current;
+        if (!slider || hasShownHint.current) return;
+
+        const isMobileOrTablet = window.matchMedia("(max-width: 1024px)").matches;
+        if (!isMobileOrTablet || series.length <= 2) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (!entry.isIntersecting || hasShownHint.current) return;
+
+                hasShownHint.current = true;
+                setShowSwipeHint(true);
+
+                hintTimerRef.current = setTimeout(() => {
+                    setShowSwipeHint(false);
+                }, 2200);
+
+                observer.disconnect();
+            },
+            { threshold: 0.45 }
+        );
+
+        observer.observe(slider);
+
+        return () => {
+            observer.disconnect();
+            if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
+        };
+    }, []);
+
+    const dismissSwipeHint = () => {
+        setShowSwipeHint(false);
+        if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
+    };
 
     const scroll = (direction: "left" | "right") => {
         if (!sliderRef.current) return;
@@ -142,6 +181,7 @@ export default function Featured() {
                         onMouseMove={handleMouseMove}
                         onMouseUp={handleMouseUp}
                         onMouseLeave={handleMouseLeave}
+                        onTouchStart={dismissSwipeHint}
                     >
                         {series.map((item) => (
                             <SeriesCard
@@ -151,6 +191,14 @@ export default function Featured() {
                                 slug={item.slug}
                             />
                         ))}
+
+                        <div
+                            className={`swipeHint ${showSwipeHint ? "isVisible" : ""}`}
+                            aria-hidden="true"
+                        >
+                            <span className="swipeHintArrow">→</span>
+                            <span>Swipe to explore more</span>
+                        </div>
                     </div>
 
                     <button
