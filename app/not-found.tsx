@@ -1,6 +1,12 @@
+"use client";
+
 import Link from "next/link";
 
 export default function NotFound() {
+  const handleTryAgain = () => {
+    window.location.reload();
+  };
+
   return (
     <main className="daoErrorPage">
       <div className="daoErrorGlow" aria-hidden="true" />
@@ -21,9 +27,13 @@ export default function NotFound() {
           <Link href="/" className="daoErrorPrimary">
             Return Home
           </Link>
-          <Link href="/journey" className="daoErrorSecondary">
-            Explore Our Journey
-          </Link>
+          <button
+            type="button"
+            onClick={handleTryAgain}
+            className="daoErrorSecondary"
+          >
+            Try Again
+          </button>
         </div>
       </section>
     </main>
