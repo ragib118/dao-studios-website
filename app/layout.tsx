@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = "https://daostudios.co";
+const siteUrl = "https://www.daostudios.co";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
