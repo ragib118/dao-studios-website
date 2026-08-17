@@ -7,8 +7,8 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
     },
 
-    sitemap: "https://daostudios.co/sitemap.xml",
+    sitemap: "https://www.daostudios.co/sitemap.xml",
 
-    host: "https://daostudios.co",
+    host: "https://www.daostudios.co",
   };
 }
