@@ -22,8 +22,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = "https://daostudios.co";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.daostudios.co"),
+  metadataBase: new URL(siteUrl),
 
   title: {
     default: "DAO Studios",
@@ -51,7 +53,7 @@ export const metadata: Metadata = {
   authors: [
     {
       name: "DAO Studios",
-      url: "https://www.daostudios.co",
+      url: siteUrl,
     },
   ],
 
@@ -63,7 +65,7 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
 
   alternates: {
-    canonical: "https://www.daostudios.co",
+    canonical: siteUrl,
   },
 
   robots: {
@@ -82,7 +84,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://www.daostudios.co",
+    url: siteUrl,
     siteName: "DAO Studios",
 
     title: "DAO Studios",
@@ -92,7 +94,7 @@ export const metadata: Metadata = {
 
     images: [
       {
-        url: "https://www.daostudios.co/og-image.png",
+        url: "/og-image.png",
         width: 1731,
         height: 909,
         alt: "DAO Studios | Original Animated Worlds & Stories",
@@ -108,7 +110,7 @@ export const metadata: Metadata = {
     description:
       "Original animated worlds, cinematic adventures, and unforgettable stories.",
 
-    images: ["https://www.daostudios.co/og-image.png"],
+    images: ["/og-image.png"],
   },
 
   icons: {
@@ -154,11 +156,11 @@ export default function RootLayout({
 
     name: "DAO Studios",
 
-    url: "https://www.daostudios.co",
+    url: siteUrl,
 
-    logo: "https://www.daostudios.co/logo.png",
+    logo: `${siteUrl}/logo.png`,
 
-    image: "https://www.daostudios.co/logo.png",
+    image: `${siteUrl}/logo.png`,
 
     description:
       "DAO Studios creates original animated worlds, cinematic storytelling, unforgettable characters, and premium entertainment.",
@@ -178,7 +180,7 @@ export default function RootLayout({
 
     alternateName: ["DAO", "daostudios.co"],
 
-    url: "https://www.daostudios.co/",
+    url: `${siteUrl}/`,
 
     description:
       "Official website of DAO Studios featuring original animated worlds, stories, and cinematic entertainment.",
@@ -186,7 +188,7 @@ export default function RootLayout({
     publisher: {
       "@type": "Organization",
       name: "DAO Studios",
-      url: "https://www.daostudios.co/",
+      url: `${siteUrl}/`,
     },
   };
 
